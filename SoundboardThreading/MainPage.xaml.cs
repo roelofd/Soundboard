@@ -25,6 +25,7 @@ namespace SoundboardThreading
         public MainPage()
         {
             this.InitializeComponent();
+            var download = new YoutubeDownloader("https://www.youtube.com/watch?v=Q8QlNuTUe4M");
         }
     }
 }
