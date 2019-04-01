@@ -25,7 +25,17 @@ namespace SoundboardThreading
         public MainPage()
         {
             this.InitializeComponent();
-            var download = new YoutubeDownloader("https://www.youtube.com/watch?v=Q8QlNuTUe4M");
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var url = new Uri(Urlbox.Text); 
+            var download = new YoutubeDownloader(url.ToString());
         }
     }
 }
