@@ -11,7 +11,6 @@
     <Grid>
         <TextBox x:Name="Urlbox" HorizontalAlignment="Left" Text="" VerticalAlignment="Top" Margin="373,295,0,0" Width="450" TextChanged="TextBox_TextChanged" InputScope="Url" PlaceholderText="Url here"/>
         <Button x:Name="Download_button" Content="Download" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="869,295,0,0" Click="Button_Click"/>
-        <Button x:Name="PlayButton" Content="Play" HorizontalAlignment="Left" Margin="598,404,0,0" VerticalAlignment="Top" Click="Button_Click_1" Visibility="Collapsed"/>
 
     </Grid>
 </Page>
