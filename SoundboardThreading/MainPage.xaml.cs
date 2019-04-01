@@ -38,8 +38,8 @@ namespace SoundboardThreading
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var url = new Uri(Urlbox.Text);
-            var downloader = new YoutubeDownloader(url.ToString());
-            //fileLocation = downloader.Download(url.ToString());
+            var downloader = new YoutubeDownloader();
+            fileLocation = downloader.Download(url.ToString());
             Download_button.Visibility = Visibility.Collapsed;
             Urlbox.Visibility = Visibility.Collapsed;
             PlayButton.Visibility = Visibility.Visible;

@@ -11,76 +11,32 @@ namespace SoundboardThreading
     class YoutubeDownloader
     {
 
-        StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+        private StorageFolder _storageFolder;
+        private YouTube _youTube;
 
-        public YoutubeDownloader(string url)
+        public YoutubeDownloader()
         {
-            DownloadAsync(url);
+            _storageFolder = ApplicationData.Current.LocalFolder;
+            _youTube = YouTube.Default;
         }
 
         public string Download(string url)
         {
-            return DownloadAsync(url).Result;
-        } 
+            YouTubeVideo video = _youTube.GetVideo(url);
+            WriteFileAsync(video);
+            return "";
+        }
 
-        private async Task<string> DownloadAsync(string url)
+        private async void WriteFileAsync(YouTubeVideo video)
         {
-            var video = new Uri(url);
-            var source = storageFolder;
-            var youtube = YouTube.Default;
-            var vid = youtube.GetVideo(video.ToString());
-            var extension = vid.AudioFormat;
-            //var a = await vid.GetUriAsync(() => new DelegatingClient());
+            StorageFile newMp4 = await _storageFolder.CreateFileAsync(video.FullName, CreationCollisionOption.GenerateUniqueName);
+            await FileIO.WriteBytesAsync(newMp4, video.GetBytes());
 
-            if (vid.IsEncrypted) //Als een video encrypted is kan je het niet opslaan
-            {
-                return null;
-            }
+             
+//            StorageFile newMp3 = await _storageFolder.CreateFileAsync(newMp4.Name + ".mp3");
+//            var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
+//            await ToAudioAsync(newMp4, newMp3, profile);
 
-            var newFile = await storageFolder.CreateFileAsync(vid.FullName, CreationCollisionOption.GenerateUniqueName);
-            await FileIO.WriteBytesAsync(newFile, vid.GetBytes());
-            
-            var destination = await storageFolder.CreateFileAsync(newFile.Name + ".mp3");
-            var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
-            await ToAudioAsync(newFile, destination, profile);
-
-            //alles in deze region is uitgecomment
-            #region audioformat
-            //if (Equals(extension, AudioFormat.Mp3))
-            //{
-            //    var destination = await storageFolder.CreateFileAsync(newFile.Name + ".mp3");
-            //    var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
-            //    await ToAudioAsync(newFile, destination, profile);
-            //}
-            //else if (Equals(extension, AudioFormat.Opus))
-            //{
-            //    var destination = await storageFolder.CreateFileAsync(newFile.Name + ".opus");
-            //    var profile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);//nog niet getest
-            //    await ToAudioAsync(newFile, destination, profile);
-            //}
-            //else if (Equals(extension, AudioFormat.Aac))
-            //{
-            //    var destination = await storageFolder.CreateFileAsync(newFile.Name + ".aac");
-            //    var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);//kan ook mp3
-            //    await ToAudioAsync(newFile, destination, profile);
-            //}
-            //else if (Equals(extension, AudioFormat.Vorbis))
-            //{
-            //    var destination = await storageFolder.CreateFileAsync(newFile.Name + ".ogg");
-            //    var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);//maakt niet uit wat je hier doet want hij doet het niet
-            //    await ToAudioAsync(newFile, destination, profile);
-            //}
-            //else if (Equals(extension, AudioFormat.Unknown))
-            //{
-            //    var destination = await storageFolder.CreateFileAsync(newFile.Name + ".mp3");
-            //    var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
-            //    await ToAudioAsync(newFile, destination, profile);
-            //}
-            #endregion
-
-            newFile.DeleteAsync();
-
-            return null;
         }
 
         private async Task<string> ToAudioAsync(StorageFile source, StorageFile destination, MediaEncodingProfile profile)
