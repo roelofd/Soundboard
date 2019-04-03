@@ -33,7 +33,7 @@ namespace SoundboardThreading
 
         }
 
-<<<<<<< HEAD
+
         private void builder()
         {
             GridView tilegrid = new GridView();
@@ -42,9 +42,7 @@ namespace SoundboardThreading
             DataTemplate template1 = new DataTemplate();
             
         }
-=======
         string fileLocation;
->>>>>>> 5ee349977229825a5d791ba29c31543f6c20bdd4
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
