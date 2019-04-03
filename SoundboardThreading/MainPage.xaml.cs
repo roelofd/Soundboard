@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -32,10 +33,33 @@ namespace SoundboardThreading
 
         }
 
+<<<<<<< HEAD
+        private void builder()
+        {
+            GridView tilegrid = new GridView();
+            tilegrid.Margin = new Thickness(50);
+
+            DataTemplate template1 = new DataTemplate();
+            
+        }
+=======
+        string fileLocation;
+>>>>>>> 5ee349977229825a5d791ba29c31543f6c20bdd4
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var url = new Uri(Urlbox.Text); 
-            var download = new YoutubeDownloader(url.ToString());
+            var url = new Uri(Urlbox.Text);
+            var downloader = new YoutubeDownloader();
+            fileLocation = downloader.Download(url.ToString());
+            Download_button.Visibility = Visibility.Collapsed;
+            Urlbox.Visibility = Visibility.Collapsed;
+            PlayButton.Visibility = Visibility.Visible;
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            var audioManager = new AudioManager();
+            audioManager.Play(fileLocation);
         }
     }
 }

@@ -11,64 +11,34 @@ namespace SoundboardThreading
     class YoutubeDownloader
     {
 
-        StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+        private StorageFolder _storageFolder;
+        private YouTube _youTube;
 
-        public YoutubeDownloader(string url)
+        public YoutubeDownloader()
         {
-            DownloadAsync(url);
+            _storageFolder = ApplicationData.Current.LocalFolder;
+            _youTube = YouTube.Default;
         }
 
-        public async Task<string> DownloadAsync(string url)
+        public string Download(string url)
         {
-            var video = new Uri(url);
-            var source = storageFolder;
-            var youtube = YouTube.Default;
-            var vid = youtube.GetVideo(video.ToString());
-            var extension = vid.AudioFormat;
-            var a = vid.Uri;
-
-            if (vid.IsEncrypted) //Als een video encrypted is kan je het niet opslaan
-            {
-                return null;
-            }
-
-            var newFile = await storageFolder.CreateFileAsync(vid.FullName, CreationCollisionOption.GenerateUniqueName);
-            await FileIO.WriteBytesAsync(newFile, vid.GetBytes());
-
-            if (Equals(extension, AudioFormat.Mp3))
-            {
-                var destination = await storageFolder.CreateFileAsync(newFile.Name + ".mp3");
-                var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
-                await ToAudioAsync(newFile, destination, profile);
-            }
-            else if (Equals(extension, AudioFormat.Opus))
-            {
-                var destination = await storageFolder.CreateFileAsync(newFile.Name + ".opus");
-                var profile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);//nog niet getest
-                await ToAudioAsync(newFile, destination, profile);
-            }
-            else if (Equals(extension, AudioFormat.Aac))
-            {
-                var destination = await storageFolder.CreateFileAsync(newFile.Name + ".aac");
-                var profile = MediaEncodingProfile.CreateM4a(AudioEncodingQuality.High);//kan ook mp3
-                await ToAudioAsync(newFile, destination, profile);
-            }
-            else if (Equals(extension, AudioFormat.Vorbis))
-            {
-                var destination = await storageFolder.CreateFileAsync(newFile.Name + ".ogg");
-                var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);//maakt niet uit wat je hier doet want hij doet het niet
-                await ToAudioAsync(newFile, destination, profile);
-            }
-            else if (Equals(extension, AudioFormat.Unknown))
-            {
-                var destination = await storageFolder.CreateFileAsync(newFile.Name + ".mp3");
-                var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
-                await ToAudioAsync(newFile, destination, profile);
-            }
-            return null;
+            YouTubeVideo video = _youTube.GetVideo(url);
+            WriteFileAsync(video);
+            return "";
         }
 
-        private async Task<string> ToAudioAsync(StorageFile source, StorageFile destination, MediaEncodingProfile profile)
+        private async void WriteFileAsync(YouTubeVideo video)
+        {
+            StorageFile mp4StorageFile = await _storageFolder.CreateFileAsync(video.FullName, CreationCollisionOption.GenerateUniqueName);
+            await FileIO.WriteBytesAsync(mp4StorageFile, video.GetBytes());
+
+             
+            StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(mp4StorageFile.Name + ".mp3");
+            var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
+            await ToAudioAsync(mp4StorageFile, mp3StorageFile, profile);
+        }
+
+        private async Task ToAudioAsync(StorageFile source, StorageFile destination, MediaEncodingProfile profile)
         {
             var transcoder = new MediaTranscoder();
             var prepareOp = await transcoder.PrepareFileTranscodeAsync(source, destination, profile);
@@ -97,7 +67,6 @@ namespace SoundboardThreading
                         break;
                 }
             }
-            return null;
         }
 
         private void TranscodeProgress(IAsyncActionWithProgress<double> asyncInfo, double percent)
@@ -105,20 +74,23 @@ namespace SoundboardThreading
             // Display or handle progress info.
         }
 
-        private void TranscodeComplete(IAsyncActionWithProgress<double> asyncInfo, AsyncStatus status)
+        private async void TranscodeComplete(IAsyncActionWithProgress<double> asyncInfo, AsyncStatus status)
         {
             asyncInfo.GetResults();
             if (asyncInfo.Status == AsyncStatus.Completed)
             {
                 // Display or handle complete info.
+                System.Diagnostics.Debug.WriteLine("Conversion success!");
             }
             else if (asyncInfo.Status == AsyncStatus.Canceled)
             {
                 // Display or handle cancel info.
+                System.Diagnostics.Debug.WriteLine("Conversion canceled!");
             }
             else
             {
                 // Display or handle error info.
+                System.Diagnostics.Debug.WriteLine("Conversion failed!");
             }
         }
     }

@@ -11,6 +11,39 @@
     <Grid>
         <TextBox x:Name="Urlbox" HorizontalAlignment="Left" Text="" VerticalAlignment="Top" Margin="373,295,0,0" Width="450" TextChanged="TextBox_TextChanged" InputScope="Url" PlaceholderText="Url here"/>
         <Button x:Name="Download_button" Content="Download" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="869,295,0,0" Click="Button_Click"/>
+        <Button x:Name="PlayButton" Content="Play" HorizontalAlignment="Left" Margin="598,404,0,0" VerticalAlignment="Top" Click="Button_Click_1" Visibility="Collapsed"/>
+
+
+        <GridView Margin="50">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <Grid>
+                        <Border Background="DarkSlateGray" Height="200" Width="200">
+                            <TextBlock Text="{Binding}" 
+                               FontSize="30" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+            <GridView.Items>
+                <x:String>Flute tune</x:String>
+                <x:String>Flute tune</x:String>
+                <x:String>Flute tune</x:String>
+                <x:String>Flute tune</x:String>
+                <x:String>Flute tune</x:String>
+                <x:String>Flute tune</x:String>
+                <x:String>Flute tune</x:String>
+                <GridViewItem>+</GridViewItem>
+            </GridView.Items>
+        </GridView>
+
+        <NavigationView x:Name="NavigationViewControl" >
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="A" x:Name="A" />
+                <NavigationViewItem Content="B" x:Name="B" />
+                <NavigationViewItem Content="C" x:Name="C" />
+            </NavigationView.MenuItems>
+        </NavigationView>
 
     </Grid>
 </Page>
