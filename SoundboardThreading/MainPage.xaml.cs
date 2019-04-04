@@ -45,7 +45,7 @@ namespace SoundboardThreading
                     Button playButton = new Button();
                     playButton.Name = "playButton" + i + x;
                     playButton.HorizontalAlignment = HorizontalAlignment.Center;
-                    playButton.VerticalAlignment = VerticalAlignment.Bottom;
+                    playButton.VerticalAlignment = VerticalAlignment.Top;
                     playButton.Visibility = Visibility.Collapsed;
                     Square.Children.Add(playButton);
                     Grid.SetColumn(playButton, i);

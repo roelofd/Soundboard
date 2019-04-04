@@ -24,6 +24,7 @@ namespace SoundboardThreading
             downloadButton = _downloadButton;
 
             downloadButton.Click += Button_Click;
+            playButton.Click += Play_Button;
         }
 
         string fileLocation;
@@ -41,6 +42,12 @@ namespace SoundboardThreading
                 textBlock.Text = fileLocation.Split(".")[0];
                 textBlock.Visibility = Visibility.Visible;
             }
+        }
+
+        private void Play_Button(object sender, RoutedEventArgs e)
+        {
+            var audioManager = new AudioManager();
+            audioManager.Play(fileLocation);
         }
     }
 }

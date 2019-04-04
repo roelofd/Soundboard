@@ -14,6 +14,7 @@ namespace SoundboardThreading
 
         private StorageFolder _storageFolder;
         private YouTube _youTube;
+        private int progressPercentage = 0;
 
         public YoutubeDownloader()
         {
@@ -34,6 +35,11 @@ namespace SoundboardThreading
 
             WriteFileAsync(video);
             return video.FullName + ".mp3";
+        }
+
+        public int getProgress()
+        {
+            return progressPercentage;
         }
 
         private async void WriteFileAsync(YouTubeVideo video)
@@ -80,6 +86,7 @@ namespace SoundboardThreading
         private void TranscodeProgress(IAsyncActionWithProgress<double> asyncInfo, double percent)
         {
             // Display or handle progress info.
+            System.Diagnostics.Debug.WriteLine(percent);
         }
 
         private async void TranscodeComplete(IAsyncActionWithProgress<double> asyncInfo, AsyncStatus status)
