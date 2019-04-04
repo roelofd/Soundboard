@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -32,11 +33,19 @@ namespace SoundboardThreading
             var url = new Uri(textBox.Text);
             var downloader = new YoutubeDownloader();
             fileLocation = downloader.Download(url.ToString());
-            downloadButton.Visibility = Visibility.Collapsed;
-            textBox.Visibility = Visibility.Collapsed;
-            playButton.Visibility = Visibility.Visible;
-            textBlock.Text = fileLocation.Split(".")[0];
-            textBlock.Visibility = Visibility.Visible;
+            if (fileLocation != null)
+            {
+                downloadButton.Visibility = Visibility.Collapsed;
+                textBox.Visibility = Visibility.Collapsed;
+                playButton.Visibility = Visibility.Visible;
+                textBlock.Text = fileLocation.Split(".")[0];
+                textBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                var message = new MessageDialog("This video is encrypted!");
+                message.ShowAsync();
+            }
         }
     }
 }

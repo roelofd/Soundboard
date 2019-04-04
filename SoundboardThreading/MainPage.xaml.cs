@@ -87,22 +87,24 @@ namespace SoundboardThreading
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var url = new Uri(Urlbox1.Text);
-            var downloader = new YoutubeDownloader();
-            fileLocation = downloader.Download(url.ToString());
-            if (fileLocation != null)
-            {
-                Download_button1.Visibility = Visibility.Collapsed;
-                Urlbox1.Visibility = Visibility.Collapsed;
-                PlayButton1.Visibility = Visibility.Visible;
-                Name1.Text = fileLocation.Split(".")[0];
-                Name1.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                var message = new MessageDialog("This video is encrypted!");
-                await message.ShowAsync();
-            }
+            //staat in tile.cs
+
+            //var url = new Uri(Urlbox1.Text);
+            //var downloader = new YoutubeDownloader();
+            //fileLocation = downloader.Download(url.ToString());
+            //if (fileLocation != null)
+            //{
+            //    Download_button1.Visibility = Visibility.Collapsed;
+            //    Urlbox1.Visibility = Visibility.Collapsed;
+            //    PlayButton1.Visibility = Visibility.Visible;
+            //    Name1.Text = fileLocation.Split(".")[0];
+            //    Name1.Visibility = Visibility.Visible;
+            //}
+            //else
+            //{
+            //    var message = new MessageDialog("This video is encrypted!");
+            //    await message.ShowAsync();
+            //}
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
