@@ -1,18 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -46,12 +34,14 @@ namespace SoundboardThreading
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var url = new Uri(Urlbox.Text);
+            var url = new Uri(Urlbox1.Text);
             var downloader = new YoutubeDownloader();
             fileLocation = downloader.Download(url.ToString());
-            Download_button.Visibility = Visibility.Collapsed;
-            Urlbox.Visibility = Visibility.Collapsed;
-            PlayButton.Visibility = Visibility.Visible;
+            Download_button1.Visibility = Visibility.Collapsed;
+            Urlbox1.Visibility = Visibility.Collapsed;
+            PlayButton1.Visibility = Visibility.Visible;
+            Name1.Text = fileLocation.Split(".")[0];
+            Name1.Visibility = Visibility.Visible;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

@@ -24,15 +24,14 @@ namespace SoundboardThreading
         {
             YouTubeVideo video = _youTube.GetVideo(url);
             WriteFileAsync(video);
-            return "";
+            return video.FullName + ".mp3";
         }
 
         private async void WriteFileAsync(YouTubeVideo video)
         {
             StorageFile mp4StorageFile = await _storageFolder.CreateFileAsync(video.FullName, CreationCollisionOption.GenerateUniqueName);
             await FileIO.WriteBytesAsync(mp4StorageFile, video.GetBytes());
-
-             
+            
             StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(mp4StorageFile.Name + ".mp3");
             var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
             await ToAudioAsync(mp4StorageFile, mp3StorageFile, profile);
