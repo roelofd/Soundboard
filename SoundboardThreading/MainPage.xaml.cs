@@ -13,26 +13,14 @@ namespace SoundboardThreading
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        TextBox[,] textBoxes = new TextBox[10,10];
+        Tile[,] tiles = new Tile[10,10];
 
         public MainPage()
         {
             this.InitializeComponent();
-
-            Grid grid = new Grid();
-
-            ColumnDefinition col1 = new ColumnDefinition();
-            col1.Width = new GridLength(0, GridUnitType.Star);
-            grid.ColumnDefinitions.Add(col1);
-
-            RowDefinition row1 = new RowDefinition();
-            row1.Height = new GridLength(0, GridUnitType.Star);
-            grid.RowDefinitions.Add(row1);
-
-
-            for (int i = 1; i <= 4; i++)
+            for (int i = 0; i < 4; i++)
             {
-                for(int x = 1; x <= 4; x++)
+                for(int x = 0; x < 4; x++)
                 {
                     TextBox textBox = new TextBox();
                     textBox.Name = "textBox" + i + x;
@@ -41,30 +29,40 @@ namespace SoundboardThreading
                     textBox.Width = 350;
                     textBox.PlaceholderText = "Paste Url here";
                     textBox.Visibility = Visibility.Visible;
-                    grid.Children.Add(textBox);
+                    Square.Children.Add(textBox);
                     Grid.SetColumn(textBox, i);
+                    Grid.SetRow(textBox, x);
 
                     TextBlock textBlock = new TextBlock();
                     textBlock.Name = "textBlock" + i + x;
                     textBlock.HorizontalAlignment = HorizontalAlignment.Center;
                     textBlock.VerticalAlignment = VerticalAlignment.Center;
                     textBlock.Visibility = Visibility.Collapsed;
+                    Square.Children.Add(textBlock);
+                    Grid.SetColumn(textBlock, i);
+                    Grid.SetRow(textBlock, x);
 
                     Button playButton = new Button();
                     playButton.Name = "playButton" + i + x;
                     playButton.HorizontalAlignment = HorizontalAlignment.Center;
                     playButton.VerticalAlignment = VerticalAlignment.Bottom;
                     playButton.Visibility = Visibility.Collapsed;
+                    Square.Children.Add(playButton);
+                    Grid.SetColumn(playButton, i);
+                    Grid.SetRow(playButton, x);
 
                     Button downloadButton = new Button();
                     downloadButton.Name = "downloadButton" + i + x;
                     downloadButton.HorizontalAlignment = HorizontalAlignment.Center;
                     downloadButton.VerticalAlignment = VerticalAlignment.Bottom;
                     downloadButton.Visibility = Visibility.Visible;
+                    Square.Children.Add(downloadButton);
+                    Grid.SetColumn(downloadButton, i);
+                    Grid.SetRow(downloadButton, x);
 
                     Tile tile = new Tile(textBox, textBlock, playButton, downloadButton);
 
-                    textBoxes[i,x] = textBox;
+                    tiles[i,x] = tile;
                 }
             }
         }
@@ -87,22 +85,24 @@ namespace SoundboardThreading
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var url = new Uri(Urlbox1.Text);
-            var downloader = new YoutubeDownloader();
-            fileLocation = downloader.Download(url.ToString());
-            if (fileLocation != null)
-            {
-                Download_button1.Visibility = Visibility.Collapsed;
-                Urlbox1.Visibility = Visibility.Collapsed;
-                PlayButton1.Visibility = Visibility.Visible;
-                Name1.Text = fileLocation.Split(".")[0];
-                Name1.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                var message = new MessageDialog("This video is encrypted!");
-                await message.ShowAsync();
-            }
+            //staat in tile.cs
+
+            //var url = new Uri(Urlbox1.Text);
+            //var downloader = new YoutubeDownloader();
+            //fileLocation = downloader.Download(url.ToString());
+            //if (fileLocation != null)
+            //{
+            //    Download_button1.Visibility = Visibility.Collapsed;
+            //    Urlbox1.Visibility = Visibility.Collapsed;
+            //    PlayButton1.Visibility = Visibility.Visible;
+            //    Name1.Text = fileLocation.Split(".")[0];
+            //    Name1.Visibility = Visibility.Visible;
+            //}
+            //else
+            //{
+            //    var message = new MessageDialog("This video is encrypted!");
+            //    await message.ShowAsync();
+            //}
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
