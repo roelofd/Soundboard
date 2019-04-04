@@ -19,12 +19,19 @@ namespace SoundboardThreading
             _storageFolder = ApplicationData.Current.LocalFolder;
             _youTube = YouTube.Default;
         }
-
+        
         public string Download(string url)
         {
             YouTubeVideo video = _youTube.GetVideo(url);
-            WriteFileAsync(video);
-            return video.FullName + ".mp3";
+
+            // Don't allow Encrypted videos
+            if (!video.IsEncrypted)
+            {
+                WriteFileAsync(video);
+                return video.FullName + ".mp3";
+            }
+
+            return null;
         }
 
         private async void WriteFileAsync(YouTubeVideo video)
