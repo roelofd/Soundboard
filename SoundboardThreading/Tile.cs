@@ -41,11 +41,6 @@ namespace SoundboardThreading
                 textBlock.Text = fileLocation.Split(".")[0];
                 textBlock.Visibility = Visibility.Visible;
             }
-            else
-            {
-                var message = new MessageDialog("This video is encrypted!");
-                message.ShowAsync();
-            }
         }
     }
 }

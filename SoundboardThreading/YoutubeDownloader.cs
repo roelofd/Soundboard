@@ -5,6 +5,7 @@ using Windows.Storage;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using Windows.Foundation;
+using Windows.UI.Popups;
 
 namespace SoundboardThreading
 {
@@ -25,7 +26,11 @@ namespace SoundboardThreading
             YouTubeVideo video = _youTube.GetVideo(url);
 
             if (video.IsEncrypted)
+            {
+                var message = new MessageDialog($"{video.FullName} is encrypted!");
+                message.ShowAsync();
                 return null;
+            }
 
             WriteFileAsync(video);
             return video.FullName + ".mp3";
