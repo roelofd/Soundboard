@@ -24,6 +24,7 @@ namespace SoundboardThreading
             downloadButton = _downloadButton;
 
             downloadButton.Click += Button_Click;
+            playButton.Click += Play_Button;
         }
 
         string fileLocation;
@@ -46,6 +47,12 @@ namespace SoundboardThreading
                 var message = new MessageDialog("This video is encrypted!");
                 message.ShowAsync();
             }
+        }
+
+        private void Play_Button(object sender, RoutedEventArgs e)
+        {
+            var audioManager = new AudioManager();
+            audioManager.Play(fileLocation);
         }
     }
 }
