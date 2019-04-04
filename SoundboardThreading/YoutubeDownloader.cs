@@ -29,7 +29,7 @@ namespace SoundboardThreading
 
         private async void WriteFileAsync(YouTubeVideo video)
         {
-            StorageFile mp4StorageFile = await _storageFolder.CreateFileAsync(video.FullName, CreationCollisionOption.GenerateUniqueName);
+            StorageFile mp4StorageFile = await _storageFolder.CreateFileAsync(video.FullName, CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteBytesAsync(mp4StorageFile, video.GetBytes());
             
             StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(mp4StorageFile.Name + ".mp3");
