@@ -23,8 +23,14 @@ namespace SoundboardThreading
         public string Download(string url)
         {
             YouTubeVideo video = _youTube.GetVideo(url);
-            WriteFileAsync(video);
-            return video.FullName + ".mp3";
+
+            if (!video.IsEncrypted)
+            {
+                WriteFileAsync(video);
+                return video.FullName + ".mp3";
+            }
+
+            return null;
         }
 
         private async void WriteFileAsync(YouTubeVideo video)
