@@ -24,14 +24,11 @@ namespace SoundboardThreading
         {
             YouTubeVideo video = _youTube.GetVideo(url);
 
-            // Don't allow Encrypted videos
-            if (!video.IsEncrypted)
-            {
-                WriteFileAsync(video);
-                return video.FullName + ".mp3";
-            }
+            if (video.IsEncrypted)
+                return null;
 
-            return null;
+            WriteFileAsync(video);
+            return video.FullName + ".mp3";
         }
 
         private async void WriteFileAsync(YouTubeVideo video)
@@ -39,7 +36,7 @@ namespace SoundboardThreading
             StorageFile mp4StorageFile = await _storageFolder.CreateFileAsync(video.FullName, CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteBytesAsync(mp4StorageFile, video.GetBytes());
             
-            StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(mp4StorageFile.Name + ".mp3");
+            StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(mp4StorageFile.Name + ".mp3", CreationCollisionOption.ReplaceExisting);
             var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
             await ToAudioAsync(mp4StorageFile, mp3StorageFile, profile);
         }
@@ -87,6 +84,7 @@ namespace SoundboardThreading
             {
                 // Display or handle complete info.
                 System.Diagnostics.Debug.WriteLine("Conversion success!");
+
             }
             else if (asyncInfo.Status == AsyncStatus.Canceled)
             {
