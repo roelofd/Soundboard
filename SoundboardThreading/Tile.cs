@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -6,96 +8,129 @@ namespace SoundboardThreading
 {
     class Tile
     {
+        private List<Thread> _threads;
+        private SemaphoreSlim _semaphore;
+        private string _fileLocation;
+        private int _column;
+        private int _row;
+
+
         public TextBox TextBox { get; set; }
         public TextBlock TextBlock { get; set; }
         public Button PlayButton { get; set; }
         public Button DownloadButton { get; set; }
         public ProgressBar ProgressBar { get; set; }
-        public int Column { get; set; }
-        public int Row { get; set; }
 
-        public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button downloadButton, int column, int row)
+        public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button downloadButton, int column, int row, List<Thread> threads, SemaphoreSlim semaphore)
         {
-            createTextBox(textBox, column, row);
-            createTextBlock(textBlock, column, row);
-            createPlayButton(playButton, column, row);
-            createDownloadButton(downloadButton, column, row);
-            
-            Column = column;
-            Row = row;
+            _column = column;
+            _row = row;
+            _threads = threads;
+            _semaphore = semaphore;
+
+            CreateTextBox(textBox);
+            CreateTextBlock(textBlock);
+            CreatePlayButton(playButton);
+            CreateDownloadButton(downloadButton);
+        }
+        
+        /*
+         * Button listener which will download a youtube video.
+         */
+        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Get url from text box before starting threads.
+            var url = new Uri(TextBox.Text);
+            //Create a downloader.
+            var downloader = new YoutubeDownloader();
+
+            // Create a new thread which will download the youtube video.
+            _threads.Add(new Thread(() =>
+            {
+                _semaphore.Wait();
+
+                #region
+                _fileLocation = downloader.Download(url.ToString());
+                #endregion
+
+                _semaphore.Release();
+            }));
+
+            // Start the thread.
+            _threads[_threads.Count - 1].Start();
+            // Join thread with main thread.
+            _threads[_threads.Count - 1].Join();
+
+            // Update the ui to show audio controls
+            if (_fileLocation != null)
+            {
+                DownloadButton.Visibility = Visibility.Collapsed;
+                TextBox.Visibility = Visibility.Collapsed;
+                PlayButton.Visibility = Visibility.Visible;
+                TextBlock.Text = _fileLocation.Split(".")[0];
+                TextBlock.Visibility = Visibility.Visible;
+            }
         }
 
-        private void createTextBox(TextBox textBox, int column, int row)
+        /*
+         * Event listener to the play button which will play the audio from the mp2 file.
+         */
+        private void Play_Button(object sender, RoutedEventArgs e)
         {
-            textBox.Name = "textBox" + column + row;
+            var audioManager = new AudioManager();
+            audioManager.Play(_fileLocation);
+        }
+
+        //--------Generate UI--------\\
+
+        private void CreateTextBox(TextBox textBox)
+        {
+            textBox.Name = "textBox" + _column + _row;
             textBox.HorizontalAlignment = HorizontalAlignment.Center;
             textBox.VerticalAlignment = VerticalAlignment.Center;
             textBox.Width = 350;
             textBox.PlaceholderText = "Paste Url here";
             textBox.Visibility = Visibility.Visible;
-            Grid.SetColumn(textBox, column);
-            Grid.SetRow(textBox, row);
+            Grid.SetColumn(textBox, _column);
+            Grid.SetRow(textBox, _row);
             TextBox = textBox;
         }
 
-        private void createTextBlock(TextBlock textBlock, int column, int row)
+        private void CreateTextBlock(TextBlock textBlock)
         {
-            textBlock.Name = "textBlock" + column + row;
+            textBlock.Name = "textBlock" + _column + _row;
             textBlock.HorizontalAlignment = HorizontalAlignment.Center;
             textBlock.VerticalAlignment = VerticalAlignment.Center;
             textBlock.Visibility = Visibility.Collapsed;
-            Grid.SetColumn(textBlock, column);
-            Grid.SetRow(textBlock, row);
+            Grid.SetColumn(textBlock, _column);
+            Grid.SetRow(textBlock, _row);
             TextBlock = textBlock;
         }
 
-        private void createPlayButton(Button playButton, int column, int row)
+        private void CreatePlayButton(Button playButton)
         {
-            playButton.Name = "playButton" + column + row;
+            playButton.Name = "playButton" + _column + _row;
             playButton.Content = "Play";
             playButton.HorizontalAlignment = HorizontalAlignment.Center;
             playButton.VerticalAlignment = VerticalAlignment.Top;
             playButton.Visibility = Visibility.Collapsed;
-            Grid.SetColumn(playButton, column);
-            Grid.SetRow(playButton, row);
+            Grid.SetColumn(playButton, _column);
+            Grid.SetRow(playButton, _row);
             playButton.Click += Play_Button;
             PlayButton = playButton;
         }
 
-        private void createDownloadButton(Button downloadButton, int column, int row)
+        private void CreateDownloadButton(Button downloadButton)
         {
-            downloadButton.Name = "downloadButton" + column + row;
+            downloadButton.Name = "downloadButton" + _column + _row;
             downloadButton.Content = "Download";
             downloadButton.HorizontalAlignment = HorizontalAlignment.Center;
             downloadButton.VerticalAlignment = VerticalAlignment.Bottom;
             downloadButton.Visibility = Visibility.Visible;
-            Grid.SetColumn(downloadButton, column);
-            Grid.SetRow(downloadButton, row);
-            downloadButton.Click += Button_Click;
+            Grid.SetColumn(downloadButton, _column);
+            Grid.SetRow(downloadButton, _row);
+            downloadButton.Click += DownloadButton_Click;
             DownloadButton = downloadButton;
-        }
-
-        string fileLocation;
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var url = new Uri(TextBox.Text);
-            var downloader = new YoutubeDownloader();
-            fileLocation = downloader.Download(url.ToString());
-            if (fileLocation != null)
-            {
-                DownloadButton.Visibility = Visibility.Collapsed;
-                TextBox.Visibility = Visibility.Collapsed;
-                PlayButton.Visibility = Visibility.Visible;
-                TextBlock.Text = fileLocation.Split(".")[0];
-                TextBlock.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void Play_Button(object sender, RoutedEventArgs e)
-        {
-            var audioManager = new AudioManager();
-            audioManager.Play(fileLocation);
         }
     }
 }

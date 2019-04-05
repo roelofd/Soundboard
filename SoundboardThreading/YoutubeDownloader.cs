@@ -15,7 +15,6 @@ namespace SoundboardThreading
 
         private StorageFolder _storageFolder;       // The folder where the downloaded files are stored
         private YouTube _youTube;                   // Class used for getting videos
-        private double progressPercentage = 0;      // Percentage of the download progress
 
         public YoutubeDownloader()
         {
@@ -26,7 +25,9 @@ namespace SoundboardThreading
 
 
         /*
-         * Method called for downloading the actual video  
+         * Method called for downloading the actual video
+         *
+         * @param url The url of the youtube video.
          */
         public string Download(string url)
         {
@@ -44,17 +45,8 @@ namespace SoundboardThreading
             return video.FullName + ".mp3";     // Return the downloaded MP3
         }
 
-
         /*
-         * Method for getting the current progress
-         */
-        public double getProgress()
-        {
-            return progressPercentage;
-        }
-
-        /*
-         * Methed for writing the video 
+         * Method for writing the video 
          */
         private async void WriteFileAsync(YouTubeVideo video)
         {
@@ -78,15 +70,15 @@ namespace SoundboardThreading
             {
                 var transcodeOp = prepareOp.TranscodeAsync();   // Conversion
 
-                
-                transcodeOp.Progress +=                                         // Save progress
-                    new AsyncActionProgressHandler<double>(TranscodeProgress);
-                transcodeOp.Completed +=                                        // Save completion
-                    new AsyncActionWithProgressCompletedHandler<double>(TranscodeComplete);
+                // Progress handler
+                transcodeOp.Progress += TranscodeProgress;
+                // Completion handler
+                transcodeOp.Completed += TranscodeComplete;
             }
             else
-            {   
-                switch (prepareOp.FailureReason)    // If failed, print failure
+            {
+                // If failed, print failure
+                switch (prepareOp.FailureReason)    
                 {
                     case TranscodeFailureReason.CodecNotFound:
                         System.Diagnostics.Debug.WriteLine("Codec not found.");
@@ -107,20 +99,18 @@ namespace SoundboardThreading
         private void TranscodeProgress(IAsyncActionWithProgress<double> asyncInfo, double percent)
         {
             // Display or handle progress info.
-            progressPercentage = percent;
             System.Diagnostics.Debug.WriteLine(percent);
         }
 
         /*
          *  Method for displaying the completion
          */
-        private async void TranscodeComplete(IAsyncActionWithProgress<double> asyncInfo, AsyncStatus status)
+        private void TranscodeComplete(IAsyncActionWithProgress<double> asyncInfo, AsyncStatus status)
         {
             asyncInfo.GetResults();
             if (asyncInfo.Status == AsyncStatus.Completed)
             {
                 // Display or handle complete info.
-                progressPercentage = 100;
                 System.Diagnostics.Debug.WriteLine("Conversion success!");
 
             }
