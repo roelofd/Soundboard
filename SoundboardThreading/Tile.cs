@@ -16,22 +16,26 @@ namespace SoundboardThreading
         public int Column { get; set; }
         public int Row { get; set; }
 
-        public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button downloadButton, int column, int row)
+        public Tile(TextBox _textBox, TextBlock _textBlock, Button _playButton, Button _downloadButton, int _column, int _row)
         {
-            textBox = this.textBox;
-            textBlock = this.textBlock;
-            playButton = this.playButton;
-            downloadButton = this.downloadButton;
+            textBox = _textBox;
+            textBlock = _textBlock;
+            playButton = _playButton;
+            downloadButton = _downloadButton;
             
             playButton.Click += Play_Button;
             downloadButton.Click += Download_Click;
 
-            Column = column;
-            Row = row;
+            Column = _column;
+            Row = _row;
         }
 
         private void Download_Click(object sender, RoutedEventArgs e)
         {
+            if(textBox.Text == string.Empty)
+            {
+                return;
+            }
             var url = new Uri(textBox.Text);
             var downloader = new YoutubeDownloader();
             fileLocation = downloader.Download(url.ToString());
