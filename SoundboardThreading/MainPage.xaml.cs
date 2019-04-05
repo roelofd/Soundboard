@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,75 +14,38 @@ namespace SoundboardThreading
     public sealed partial class MainPage : Page
     {
         Tile[,] tiles = new Tile[10,10];
-        TextBox textBox;
-        TextBlock textBlock;
-        Button playButton;
-        Button downloadButton;
 
         public MainPage()
         {
             this.InitializeComponent();
-
-            var taskNumber = 0;
             for (int Column = 0; Column < 4; Column++)
             {
                 for(int Row = 0; Row < 4; Row++)
                 {
-                    textBox = new TextBox();
+                    TextBox textBox = new TextBox();
                     Square.Children.Add(textBox);
-                    textBox.Name = "textBox" + Column + Row;
-                    textBox.HorizontalAlignment = HorizontalAlignment.Center;
-                    textBox.VerticalAlignment = VerticalAlignment.Center;
-                    textBox.Width = 350;
-                    textBox.PlaceholderText = "Paste Url here";
-                    textBox.Visibility = Visibility.Visible;
-                    Grid.SetColumn(textBox, Column);
-                    Grid.SetRow(textBox, Row);
 
-                    textBlock = new TextBlock();
+                    TextBlock textBlock = new TextBlock();
                     Square.Children.Add(textBlock);
-                    textBlock.Name = "textBlock" + Column + Row;
-                    textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                    textBlock.VerticalAlignment = VerticalAlignment.Center;
-                    textBlock.Visibility = Visibility.Collapsed;
-                    Grid.SetColumn(textBlock, Column);
-                    Grid.SetRow(textBlock, Row);
-
-                    playButton = new Button();
+                    
+                    Button playButton = new Button();
                     Square.Children.Add(playButton);
-                    playButton.Name = "playButton" + Column + Row;
-                    playButton.Content = "Play";
-                    playButton.HorizontalAlignment = HorizontalAlignment.Center;
-                    playButton.VerticalAlignment = VerticalAlignment.Top;
-                    playButton.Visibility = Visibility.Collapsed;
-                    Grid.SetColumn(playButton, Column);
-                    Grid.SetRow(playButton, Row);
 
-                    downloadButton = new Button();
+                    Button downloadButton = new Button();                    
                     Square.Children.Add(downloadButton);
-                    downloadButton.Name = "downloadButton" + Column + Row;
-                    downloadButton.Content = "Download";
-                    downloadButton.HorizontalAlignment = HorizontalAlignment.Center;
-                    downloadButton.VerticalAlignment = VerticalAlignment.Bottom;
-                    downloadButton.Visibility = Visibility.Visible;
-                    Grid.SetColumn(downloadButton, Column);
-                    Grid.SetRow(downloadButton, Row);
 
-                    taskNumber = (Column * 10) + Row;
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(createTile), taskNumber);
+                    Tile tile = new Tile(textBox, textBlock, playButton, downloadButton, Column, Row);
+
+                    tiles[Column,Row] = tile;
                 }
             }
         }
 
-        private void createTile(Object taskNumber)
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var Column = Convert.ToInt32(taskNumber.ToString()) / 10;
-            var Row = Convert.ToInt32(taskNumber.ToString()) % 10;
-            
-            Tile tile = new Tile(textBox, textBlock, playButton, downloadButton, Column, Row);
 
-            tiles[Column, Row] = tile;
         }
+
 
         private void builder()
         {
@@ -92,6 +54,35 @@ namespace SoundboardThreading
 
             DataTemplate template1 = new DataTemplate();
             
+        }
+        string fileLocation;
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //staat in tile.cs
+
+            //var url = new Uri(Urlbox1.Text);
+            //var downloader = new YoutubeDownloader();
+            //fileLocation = downloader.Download(url.ToString());
+            //if (fileLocation != null)
+            //{
+            //    Download_button1.Visibility = Visibility.Collapsed;
+            //    Urlbox1.Visibility = Visibility.Collapsed;
+            //    PlayButton1.Visibility = Visibility.Visible;
+            //    Name1.Text = fileLocation.Split(".")[0];
+            //    Name1.Visibility = Visibility.Visible;
+            //}
+            //else
+            //{
+            //    var message = new MessageDialog("This video is encrypted!");
+            //    await message.ShowAsync();
+            //}
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            var audioManager = new AudioManager();
+            audioManager.Play(fileLocation);
         }
     }
 }
