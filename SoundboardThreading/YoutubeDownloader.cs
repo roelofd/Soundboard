@@ -5,6 +5,7 @@ using Windows.Storage;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
 
 namespace SoundboardThreading
 {
@@ -13,7 +14,7 @@ namespace SoundboardThreading
 
         private StorageFolder _storageFolder;
         private YouTube _youTube;
-        private int progressPercentage = 0;
+        private double progressPercentage = 0;
 
         public YoutubeDownloader()
         {
@@ -32,7 +33,7 @@ namespace SoundboardThreading
             return video.FullName + ".mp3";
         }
 
-        public int getProgress()
+        public double getProgress()
         {
             return progressPercentage;
         }
@@ -81,6 +82,7 @@ namespace SoundboardThreading
         private void TranscodeProgress(IAsyncActionWithProgress<double> asyncInfo, double percent)
         {
             // Display or handle progress info.
+            progressPercentage = percent;
             System.Diagnostics.Debug.WriteLine(percent);
         }
 
@@ -90,6 +92,7 @@ namespace SoundboardThreading
             if (asyncInfo.Status == AsyncStatus.Completed)
             {
                 // Display or handle complete info.
+                progressPercentage = 100;
                 System.Diagnostics.Debug.WriteLine("Conversion success!");
 
             }

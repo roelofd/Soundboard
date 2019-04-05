@@ -60,7 +60,11 @@ namespace SoundboardThreading
                     Grid.SetColumn(downloadButton, i);
                     Grid.SetRow(downloadButton, x);
 
-                    Tile tile = new Tile(textBox, textBlock, playButton, downloadButton);
+                    ProgressBar progressBar = new ProgressBar();
+                    progressBar.HorizontalAlignment = HorizontalAlignment.Center;
+                    progressBar.VerticalAlignment = VerticalAlignment.Center;
+
+                    Tile tile = new Tile(textBox, textBlock, playButton, downloadButton, progressBar);
 
                     tiles[i,x] = tile;
                 }

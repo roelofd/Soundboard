@@ -15,13 +15,15 @@ namespace SoundboardThreading
         public TextBlock textBlock { get; set; }
         public Button playButton { get; set; }
         public Button downloadButton { get; set; }
+        public ProgressBar progressBar { get; set; }
 
-        public Tile(TextBox _textBox, TextBlock _textBlock, Button _playButton, Button _downloadButton)
+        public Tile(TextBox _textBox, TextBlock _textBlock, Button _playButton, Button _downloadButton, ProgressBar _progressBar)
         {
             textBox = _textBox;
             textBlock = _textBlock;
             playButton = _playButton;
             downloadButton = _downloadButton;
+            progressBar = _progressBar;
 
             downloadButton.Click += Button_Click;
             playButton.Click += Play_Button;
@@ -34,6 +36,7 @@ namespace SoundboardThreading
             var url = new Uri(textBox.Text);
             var downloader = new YoutubeDownloader();
             fileLocation = downloader.Download(url.ToString());
+            //updateProgress(downloader);
             if (fileLocation != null)
             {
                 downloadButton.Visibility = Visibility.Collapsed;
@@ -53,6 +56,16 @@ namespace SoundboardThreading
         {
             var audioManager = new AudioManager();
             audioManager.Play(fileLocation);
+        }
+
+        private async Task updateProgress(YoutubeDownloader youtubeDownloader)
+        {
+            double progress = 0;
+            while(progress < 100)
+            {
+                progress = youtubeDownloader.getProgress();
+                progressBar.Value = progress;
+            }
         }
     }
 }
