@@ -32,10 +32,13 @@ namespace SoundboardThreading
                     Button playButton = new Button();
                     Square.Children.Add(playButton);
 
+                    Button stopButton = new Button();
+                    Square.Children.Add(stopButton);
+
                     Button downloadButton = new Button();                    
                     Square.Children.Add(downloadButton);
 
-                    Tile tile = new Tile(textBox, textBlock, playButton, downloadButton, column, row, _downloadThreads, _downloadSlim);
+                    Tile tile = new Tile(textBox, textBlock, playButton, stopButton, downloadButton, column, row, _downloadThreads, _downloadSlim);
 
                     tiles[column,row] = tile;
                 }
