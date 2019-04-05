@@ -44,6 +44,7 @@ namespace SoundboardThreading
 
                     Button playButton = new Button();
                     playButton.Name = "playButton" + i + x;
+                    playButton.Content = "Play";
                     playButton.HorizontalAlignment = HorizontalAlignment.Center;
                     playButton.VerticalAlignment = VerticalAlignment.Top;
                     playButton.Visibility = Visibility.Collapsed;
@@ -53,6 +54,7 @@ namespace SoundboardThreading
 
                     Button downloadButton = new Button();
                     downloadButton.Name = "downloadButton" + i + x;
+                    downloadButton.Content = "Download";
                     downloadButton.HorizontalAlignment = HorizontalAlignment.Center;
                     downloadButton.VerticalAlignment = VerticalAlignment.Bottom;
                     downloadButton.Visibility = Visibility.Visible;
