@@ -18,57 +18,25 @@ namespace SoundboardThreading
         public MainPage()
         {
             this.InitializeComponent();
-            for (int i = 0; i < 4; i++)
+            for (int Column = 0; Column < 4; Column++)
             {
-                for(int x = 0; x < 4; x++)
+                for(int Row = 0; Row < 4; Row++)
                 {
                     TextBox textBox = new TextBox();
-                    textBox.Name = "textBox" + i + x;
-                    textBox.HorizontalAlignment = HorizontalAlignment.Center;
-                    textBox.VerticalAlignment = VerticalAlignment.Center;
-                    textBox.Width = 350;
-                    textBox.PlaceholderText = "Paste Url here";
-                    textBox.Visibility = Visibility.Visible;
                     Square.Children.Add(textBox);
-                    Grid.SetColumn(textBox, i);
-                    Grid.SetRow(textBox, x);
 
                     TextBlock textBlock = new TextBlock();
-                    textBlock.Name = "textBlock" + i + x;
-                    textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-                    textBlock.VerticalAlignment = VerticalAlignment.Center;
-                    textBlock.Visibility = Visibility.Collapsed;
                     Square.Children.Add(textBlock);
-                    Grid.SetColumn(textBlock, i);
-                    Grid.SetRow(textBlock, x);
-
+                    
                     Button playButton = new Button();
-                    playButton.Name = "playButton" + i + x;
-                    playButton.Content = "Play";
-                    playButton.HorizontalAlignment = HorizontalAlignment.Center;
-                    playButton.VerticalAlignment = VerticalAlignment.Top;
-                    playButton.Visibility = Visibility.Collapsed;
                     Square.Children.Add(playButton);
-                    Grid.SetColumn(playButton, i);
-                    Grid.SetRow(playButton, x);
 
-                    Button downloadButton = new Button();
-                    downloadButton.Name = "downloadButton" + i + x;
-                    downloadButton.Content = "Download";
-                    downloadButton.HorizontalAlignment = HorizontalAlignment.Center;
-                    downloadButton.VerticalAlignment = VerticalAlignment.Bottom;
-                    downloadButton.Visibility = Visibility.Visible;
+                    Button downloadButton = new Button();                    
                     Square.Children.Add(downloadButton);
-                    Grid.SetColumn(downloadButton, i);
-                    Grid.SetRow(downloadButton, x);
 
-                    ProgressBar progressBar = new ProgressBar();
-                    progressBar.HorizontalAlignment = HorizontalAlignment.Center;
-                    progressBar.VerticalAlignment = VerticalAlignment.Center;
+                    Tile tile = new Tile(textBox, textBlock, playButton, downloadButton, Column, Row);
 
-                    Tile tile = new Tile(textBox, textBlock, playButton, downloadButton, progressBar);
-
-                    tiles[i,x] = tile;
+                    tiles[Column,Row] = tile;
                 }
             }
         }
