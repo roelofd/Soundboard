@@ -16,14 +16,6 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <NavigationView x:Name="NavigationViewControl" HorizontalAlignment="Left" VerticalAlignment="Stretch" >
-            <NavigationView.MenuItems>
-                <NavigationViewItem Content="A" x:Name="A" />
-                <NavigationViewItem Content="B" x:Name="B" />
-                <NavigationViewItem Content="C" x:Name="C" />
-            </NavigationView.MenuItems>
-        </NavigationView>
-
         <Grid x:Name="Square">
 
             <Grid.RowDefinitions>
