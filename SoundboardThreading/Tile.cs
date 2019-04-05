@@ -18,9 +18,10 @@ namespace SoundboardThreading
         public TextBox TextBox { get; set; }
         public TextBlock TextBlock { get; set; }
         public Button PlayButton { get; set; }
+        public Button StopButton { get; set; }
         public Button DownloadButton { get; set; }
         public ProgressBar ProgressBar { get; set; }
-
+        AudioManager audioManager;
         public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button downloadButton, int column, int row, List<Thread> threads, SemaphoreSlim semaphore)
         {
             _column = column;
@@ -32,6 +33,8 @@ namespace SoundboardThreading
             CreateTextBlock(textBlock);
             CreatePlayButton(playButton);
             CreateDownloadButton(downloadButton);
+
+            audioManager = new AudioManager();
         }
         
         /*
@@ -119,7 +122,18 @@ namespace SoundboardThreading
             playButton.Click += Play_Button;
             PlayButton = playButton;
         }
-
+        private void createStopButton(Button stopButton)
+        {
+            stopButton.Name = "stopButton" + column + row;
+            stopButton.Content = "Stop";
+            stopButton.HorizontalAlignment = HorizontalAlignment.Center;
+            stopButton.VerticalAlignment = VerticalAlignment.Top;
+            stopButton.Visibility = Visibility.Collapsed;
+            Grid.SetColumn(stopButton, _column);
+            Grid.SetRow(stopButton, _row);
+            stopButton.Click += Stop_Button;
+            StopButton = stopButton;
+        }
         private void CreateDownloadButton(Button downloadButton)
         {
             downloadButton.Name = "downloadButton" + _column + _row;
@@ -129,8 +143,41 @@ namespace SoundboardThreading
             downloadButton.Visibility = Visibility.Visible;
             Grid.SetColumn(downloadButton, _column);
             Grid.SetRow(downloadButton, _row);
-            downloadButton.Click += DownloadButton_Click;
+            downloadButton.Click += Button_Click;
             DownloadButton = downloadButton;
+        }
+
+        string fileLocation;
+
+        private void Download_Button(object sender, RoutedEventArgs e)
+        {
+            var url = new Uri(TextBox.Text);
+            var downloader = new YoutubeDownloader();
+            fileLocation = downloader.Download(url.ToString());
+            if (fileLocation != null)
+            {
+                DownloadButton.Visibility = Visibility.Collapsed;
+                TextBox.Visibility = Visibility.Collapsed;
+                PlayButton.Visibility = Visibility.Visible;
+                TextBlock.Text = fileLocation.Split(".")[0];
+                TextBlock.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void Play_Button(object sender, RoutedEventArgs e)
+        {
+            audioManager.Play(fileLocation);
+
+            PlayButton.Visibility = Visibility.Collapsed;
+            StopButton.Visibility = Visibility.Visible;
+        }
+
+        private void Stop_Button(object sender, RoutedEventArgs e)
+        {
+            audioManager.Stop();
+
+            PlayButton.Visibility = Visibility.Visible;
+            StopButton.Visibility = Visibility.Collapsed;
         }
     }
 }
