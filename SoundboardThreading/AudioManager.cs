@@ -14,7 +14,7 @@ namespace SoundboardThreading
         public AudioManager()
         {
             storageFolder = ApplicationData.Current.LocalFolder;
-            playMusic = new Windows.UI.Xaml.Controls.MediaElement {AudioCategory = AudioCategory.Media};
+            playMusic = new MediaElement {AudioCategory = AudioCategory.Media};
         }
 
         public async void Play(string fileName)

@@ -18,6 +18,7 @@ namespace SoundboardThreading
         TextBox textBox;
         TextBlock textBlock;
         Button playButton;
+        Button stopButton;
         Button downloadButton;
 
         public MainPage()
@@ -59,6 +60,16 @@ namespace SoundboardThreading
                     Grid.SetColumn(playButton, Column);
                     Grid.SetRow(playButton, Row);
 
+                    stopButton = new Button();
+                    Square.Children.Add(stopButton);
+                    stopButton.Name = "stopButton" + Column + Row;
+                    stopButton.Content = "Stop";
+                    stopButton.HorizontalAlignment = HorizontalAlignment.Center;
+                    stopButton.VerticalAlignment = VerticalAlignment.Top;
+                    stopButton.Visibility = Visibility.Collapsed;
+                    Grid.SetColumn(stopButton, Column);
+                    Grid.SetRow(stopButton, Row);
+
                     downloadButton = new Button();
                     Square.Children.Add(downloadButton);
                     downloadButton.Name = "downloadButton" + Column + Row;
@@ -80,7 +91,7 @@ namespace SoundboardThreading
             var Column = Convert.ToInt32(taskNumber.ToString()) / 10;
             var Row = Convert.ToInt32(taskNumber.ToString()) % 10;
             
-            Tile tile = new Tile(textBox, textBlock, playButton, downloadButton, Column, Row);
+            Tile tile = new Tile(textBox, textBlock, playButton, stopButton, downloadButton, Column, Row);
 
             tiles[Column, Row] = tile;
         }

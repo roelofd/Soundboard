@@ -10,20 +10,25 @@ namespace SoundboardThreading
         public TextBlock textBlock { get; set; }
         public Button playButton { get; set; }
         public Button downloadButton { get; set; }
+        public Button stopButton { get; set; }
 
         string fileLocation;    // File location of the corresponding sound
 
         public int Column { get; set; }
         public int Row { get; set; }
 
-        public Tile(TextBox _textBox, TextBlock _textBlock, Button _playButton, Button _downloadButton, int _column, int _row)
+        AudioManager audioManager = new AudioManager();
+
+        public Tile(TextBox _textBox, TextBlock _textBlock, Button _playButton, Button _stopButton, Button _downloadButton, int _column, int _row)
         {
             textBox = _textBox;
             textBlock = _textBlock;
             playButton = _playButton;
+            stopButton = _stopButton;
             downloadButton = _downloadButton;
             
             playButton.Click += Play_Button;
+            stopButton.Click += Stop_Button;
             downloadButton.Click += Download_Click;
 
             Column = _column;
@@ -55,8 +60,12 @@ namespace SoundboardThreading
          */
         private void Play_Button(object sender, RoutedEventArgs e)
         {
-            var audioManager = new AudioManager();
             audioManager.Play(fileLocation);
+        }
+
+        private void Stop_Button(object sender, RoutedEventArgs e)
+        {
+            audioManager.Stop();
         }
     }
 }
