@@ -34,7 +34,7 @@ namespace SoundboardThreading
             CreateTextBlock(textBlock);
             CreatePlayButton(playButton);
             CreateDownloadButton(downloadButton);
-            createStopButton(stopButton);
+            CreateStopButton(stopButton);
 
             audioManager = new AudioManager();
         }
@@ -42,7 +42,7 @@ namespace SoundboardThreading
         /*
          * Button listener which will download a youtube video.
          */
-        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        private void Download_Button(object sender, RoutedEventArgs e)
         {
             // Get url from text box before starting threads.
             var url = new Uri(TextBox.Text);
@@ -82,10 +82,21 @@ namespace SoundboardThreading
          */
         private void Play_Button(object sender, RoutedEventArgs e)
         {
-            audioManager.Play(fileLocation);
+            audioManager.Play(_fileLocation);
 
             PlayButton.Visibility = Visibility.Collapsed;
             StopButton.Visibility = Visibility.Visible;
+        }
+
+        /*
+         * Event listener to the stop button.
+         */
+        private void Stop_Button(object sender, RoutedEventArgs e)
+        {
+            audioManager.Stop();
+
+            PlayButton.Visibility = Visibility.Visible;
+            StopButton.Visibility = Visibility.Collapsed;
         }
 
         //--------Generate UI--------\\
@@ -126,7 +137,7 @@ namespace SoundboardThreading
             playButton.Click += Play_Button;
             PlayButton = playButton;
         }
-        private void createStopButton(Button stopButton)
+        private void CreateStopButton(Button stopButton)
         {
             stopButton.Name = "stopButton" + _column + _row;
             stopButton.Content = "Stop";
@@ -151,29 +162,6 @@ namespace SoundboardThreading
             DownloadButton = downloadButton;
         }
 
-        string fileLocation;
-
-        private void Download_Button(object sender, RoutedEventArgs e)
-        {
-            var url = new Uri(TextBox.Text);
-            var downloader = new YoutubeDownloader();
-            fileLocation = downloader.Download(url.ToString());
-            if (fileLocation != null)
-            {
-                DownloadButton.Visibility = Visibility.Collapsed;
-                TextBox.Visibility = Visibility.Collapsed;
-                PlayButton.Visibility = Visibility.Visible;
-                TextBlock.Text = fileLocation.Split(".")[0];
-                TextBlock.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void Stop_Button(object sender, RoutedEventArgs e)
-        {
-            audioManager.Stop();
-
-            PlayButton.Visibility = Visibility.Visible;
-            StopButton.Visibility = Visibility.Collapsed;
-        }
+        
     }
 }
