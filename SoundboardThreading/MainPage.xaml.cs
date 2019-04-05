@@ -31,19 +31,17 @@ namespace SoundboardThreading
                     Button playButton = new Button();
                     Square.Children.Add(playButton);
 
+                    Button stopButton = new Button();
+                    Square.Children.Add(stopButton);
+
                     Button downloadButton = new Button();                    
                     Square.Children.Add(downloadButton);
 
-                    Tile tile = new Tile(textBox, textBlock, playButton, downloadButton, Column, Row);
+                    Tile tile = new Tile(textBox, textBlock, playButton, stopButton, downloadButton, Column, Row);
 
                     tiles[Column,Row] = tile;
                 }
             }
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
         }
 
 
@@ -53,36 +51,6 @@ namespace SoundboardThreading
             tilegrid.Margin = new Thickness(50);
 
             DataTemplate template1 = new DataTemplate();
-            
-        }
-        string fileLocation;
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            //staat in tile.cs
-
-            //var url = new Uri(Urlbox1.Text);
-            //var downloader = new YoutubeDownloader();
-            //fileLocation = downloader.Download(url.ToString());
-            //if (fileLocation != null)
-            //{
-            //    Download_button1.Visibility = Visibility.Collapsed;
-            //    Urlbox1.Visibility = Visibility.Collapsed;
-            //    PlayButton1.Visibility = Visibility.Visible;
-            //    Name1.Text = fileLocation.Split(".")[0];
-            //    Name1.Visibility = Visibility.Visible;
-            //}
-            //else
-            //{
-            //    var message = new MessageDialog("This video is encrypted!");
-            //    await message.ShowAsync();
-            //}
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            var audioManager = new AudioManager();
-            audioManager.Play(fileLocation);
         }
     }
 }

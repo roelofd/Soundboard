@@ -9,20 +9,27 @@ namespace SoundboardThreading
         public TextBox TextBox { get; set; }
         public TextBlock TextBlock { get; set; }
         public Button PlayButton { get; set; }
+        public Button StopButton { get; set; }
         public Button DownloadButton { get; set; }
         public ProgressBar ProgressBar { get; set; }
         public int Column { get; set; }
         public int Row { get; set; }
 
-        public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button downloadButton, int column, int row)
+
+        AudioManager audioManager;
+
+        public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button stopButton, Button downloadButton, int column, int row)
         {
             createTextBox(textBox, column, row);
             createTextBlock(textBlock, column, row);
             createPlayButton(playButton, column, row);
+            createStopButton(stopButton, column, row);
             createDownloadButton(downloadButton, column, row);
             
             Column = column;
             Row = row;
+
+            audioManager = new AudioManager();
         }
 
         private void createTextBox(TextBox textBox, int column, int row)
@@ -62,6 +69,19 @@ namespace SoundboardThreading
             PlayButton = playButton;
         }
 
+        private void createStopButton(Button stopButton, int column, int row)
+        {
+            stopButton.Name = "stopButton" + column + row;
+            stopButton.Content = "Stop";
+            stopButton.HorizontalAlignment = HorizontalAlignment.Center;
+            stopButton.VerticalAlignment = VerticalAlignment.Top;
+            stopButton.Visibility = Visibility.Collapsed;
+            Grid.SetColumn(stopButton, column);
+            Grid.SetRow(stopButton, row);
+            stopButton.Click += Stop_Button;
+            StopButton = stopButton;
+        }
+
         private void createDownloadButton(Button downloadButton, int column, int row)
         {
             downloadButton.Name = "downloadButton" + column + row;
@@ -71,13 +91,13 @@ namespace SoundboardThreading
             downloadButton.Visibility = Visibility.Visible;
             Grid.SetColumn(downloadButton, column);
             Grid.SetRow(downloadButton, row);
-            downloadButton.Click += Button_Click;
+            downloadButton.Click += Download_Button;
             DownloadButton = downloadButton;
         }
 
         string fileLocation;
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Download_Button(object sender, RoutedEventArgs e)
         {
             var url = new Uri(TextBox.Text);
             var downloader = new YoutubeDownloader();
@@ -94,8 +114,18 @@ namespace SoundboardThreading
 
         private void Play_Button(object sender, RoutedEventArgs e)
         {
-            var audioManager = new AudioManager();
             audioManager.Play(fileLocation);
+
+            PlayButton.Visibility = Visibility.Collapsed;
+            StopButton.Visibility = Visibility.Visible;
+        }
+
+        private void Stop_Button(object sender, RoutedEventArgs e)
+        {
+            audioManager.Stop();
+
+            PlayButton.Visibility = Visibility.Visible;
+            StopButton.Visibility = Visibility.Collapsed;
         }
     }
 }
