@@ -10,6 +10,9 @@ namespace SoundboardThreading
         public TextBlock textBlock { get; set; }
         public Button playButton { get; set; }
         public Button downloadButton { get; set; }
+
+        string fileLocation;    // File location of the corresponding sound
+
         public int Column { get; set; }
         public int Row { get; set; }
 
@@ -19,7 +22,7 @@ namespace SoundboardThreading
             textBlock = this.textBlock;
             playButton = this.playButton;
             downloadButton = this.downloadButton;
-
+            
             playButton.Click += Play_Button;
             downloadButton.Click += Download_Click;
 
@@ -27,13 +30,12 @@ namespace SoundboardThreading
             Row = row;
         }
 
-        string fileLocation;
-
         private void Download_Click(object sender, RoutedEventArgs e)
         {
             var url = new Uri(textBox.Text);
             var downloader = new YoutubeDownloader();
             fileLocation = downloader.Download(url.ToString());
+
             if (fileLocation != null)
             {
                 downloadButton.Visibility = Visibility.Collapsed;
@@ -44,6 +46,9 @@ namespace SoundboardThreading
             }
         }
 
+        /*
+         * Click event handler for clicking the play button
+         */
         private void Play_Button(object sender, RoutedEventArgs e)
         {
             var audioManager = new AudioManager();
