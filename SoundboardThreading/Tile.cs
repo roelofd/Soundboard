@@ -11,11 +11,14 @@ namespace SoundboardThreading
 {
     class Tile
     {
+        // Instatiate tile UI items
         public TextBox textBox { get; set; }
         public TextBlock textBlock { get; set; }
         public Button playButton { get; set; }
         public Button downloadButton { get; set; }
         public ProgressBar progressBar { get; set; }
+
+        string fileLocation;    // File location of the corresponding sound
 
         public Tile(TextBox _textBox, TextBlock _textBlock, Button _playButton, Button _downloadButton, ProgressBar _progressBar)
         {
@@ -29,13 +32,14 @@ namespace SoundboardThreading
             playButton.Click += Play_Button;
         }
 
-        string fileLocation;
-
+        /*
+         * Click event handler for clicking the donwload button on a tile
+         */
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var url = new Uri(textBox.Text);
-            var downloader = new YoutubeDownloader();
-            fileLocation = downloader.Download(url.ToString());
+            var url = new Uri(textBox.Text);                    // Save url
+            var downloader = new YoutubeDownloader();           // Create a downloader
+            fileLocation = downloader.Download(url.ToString()); // Download to certain file location
             //updateProgress(downloader);
             if (fileLocation != null)
             {
@@ -47,12 +51,18 @@ namespace SoundboardThreading
             }
         }
 
+        /*
+         * Click event handler for clicking the play button
+         */
         private void Play_Button(object sender, RoutedEventArgs e)
         {
             var audioManager = new AudioManager();
             audioManager.Play(fileLocation);
         }
 
+        /*
+         * Method for updating the progress of the download
+         */
         private async Task updateProgress(YoutubeDownloader youtubeDownloader)
         {
             double progress = 0;
