@@ -22,7 +22,8 @@ namespace SoundboardThreading
         public Button DownloadButton { get; set; }
         public ProgressBar ProgressBar { get; set; }
         AudioManager audioManager;
-        public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button downloadButton, int column, int row, List<Thread> threads, SemaphoreSlim semaphore)
+
+        public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button stopButton, Button downloadButton, int column, int row, List<Thread> threads, SemaphoreSlim semaphore)
         {
             _column = column;
             _row = row;
@@ -33,6 +34,7 @@ namespace SoundboardThreading
             CreateTextBlock(textBlock);
             CreatePlayButton(playButton);
             CreateDownloadButton(downloadButton);
+            createStopButton(stopButton);
 
             audioManager = new AudioManager();
         }
@@ -80,8 +82,10 @@ namespace SoundboardThreading
          */
         private void Play_Button(object sender, RoutedEventArgs e)
         {
-            var audioManager = new AudioManager();
-            audioManager.Play(_fileLocation);
+            audioManager.Play(fileLocation);
+
+            PlayButton.Visibility = Visibility.Collapsed;
+            StopButton.Visibility = Visibility.Visible;
         }
 
         //--------Generate UI--------\\
@@ -124,7 +128,7 @@ namespace SoundboardThreading
         }
         private void createStopButton(Button stopButton)
         {
-            stopButton.Name = "stopButton" + column + row;
+            stopButton.Name = "stopButton" + _column + _row;
             stopButton.Content = "Stop";
             stopButton.HorizontalAlignment = HorizontalAlignment.Center;
             stopButton.VerticalAlignment = VerticalAlignment.Top;
@@ -143,7 +147,7 @@ namespace SoundboardThreading
             downloadButton.Visibility = Visibility.Visible;
             Grid.SetColumn(downloadButton, _column);
             Grid.SetRow(downloadButton, _row);
-            downloadButton.Click += Button_Click;
+            downloadButton.Click += Download_Button;
             DownloadButton = downloadButton;
         }
 
@@ -162,14 +166,6 @@ namespace SoundboardThreading
                 TextBlock.Text = fileLocation.Split(".")[0];
                 TextBlock.Visibility = Visibility.Visible;
             }
-        }
-
-        private void Play_Button(object sender, RoutedEventArgs e)
-        {
-            audioManager.Play(fileLocation);
-
-            PlayButton.Visibility = Visibility.Collapsed;
-            StopButton.Visibility = Visibility.Visible;
         }
 
         private void Stop_Button(object sender, RoutedEventArgs e)
