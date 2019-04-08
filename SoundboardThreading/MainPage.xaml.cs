@@ -2,8 +2,6 @@
 using System.Threading;
 using Windows.UI.Xaml.Controls;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
-
 namespace SoundboardThreading
 {
     /// <summary>
@@ -11,12 +9,11 @@ namespace SoundboardThreading
     /// </summary>
     public sealed partial class MainPage
     {
-        private List<Thread> _downloadThreads = new List<Thread>(); 
-        private SemaphoreSlim _downloadSlim = new SemaphoreSlim(4);
+        private readonly List<Thread> _downloadThreads = new List<Thread>(); 
+        private readonly SemaphoreSlim _downloadSlim = new SemaphoreSlim(4);
 
         public MainPage()
         {
-
             InitializeComponent();
 
             //This for loop creates all the tiles.
@@ -39,9 +36,9 @@ namespace SoundboardThreading
 
                     Button downloadButton = new Button();                    
                     Square.Children.Add(downloadButton);
-
+                    
                     //Creates the Tile and adds the UI elements to it.
-                    Tile tile = new Tile(textBox, textBlock, playButton, stopButton, downloadButton, column, row, _downloadThreads, _downloadSlim);
+                    new Tile(textBox, textBlock, playButton, stopButton, downloadButton, column, row, _downloadThreads, _downloadSlim);
                 }
             }
         }
