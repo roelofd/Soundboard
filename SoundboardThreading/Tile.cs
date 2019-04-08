@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -8,23 +9,22 @@ namespace SoundboardThreading
 {
     class Tile
     {
-        private List<Thread> _threads;
-        private SemaphoreSlim _semaphore;
+        private readonly List<Thread> _threads;
+        private readonly SemaphoreSlim _semaphore;
+        private readonly AudioManager _audioManager;
+        private readonly int _column;
+        private readonly int _row;
 
         //The location where the .mp3 is stored.
         private string _fileLocation;
+        
+        // Ui elements
+        private TextBox _textBox;
+        private TextBlock _textBlock;
+        private Button _playButton;
+        private Button _stopButton;
+        private Button _downloadButton;
 
-        private int _column;
-        private int _row;
-
-
-        private TextBox TextBox;
-        private TextBlock TextBlock;
-        private Button PlayButton;
-        private Button StopButton;
-        private Button DownloadButton;
-
-        private AudioManager AudioManager;
 
         public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button stopButton, Button downloadButton, int column, int row, List<Thread> threads, SemaphoreSlim semaphore)
         {
@@ -39,25 +39,38 @@ namespace SoundboardThreading
             CreateDownloadButton(downloadButton);
             CreateStopButton(stopButton);
 
-            AudioManager = new AudioManager();
+            _audioManager = new AudioManager();
         }
-        
+
+        /*
+         * Button listener which will download a youtube video.
+         */
         /*
          * Button listener which will download a youtube video.
          */
         private void Download_Button(object sender, RoutedEventArgs e)
         {
             // Get url from text box before starting threads.
-            var url = new Uri(TextBox.Text);
+            var url = new Uri(_textBox.Text);
             //Create a downloader.
-            var downloader = new YoutubeDownloader();
+            var downloader = new YoutubeDownloader(url.ToString());
+
+            // Check if video is encrypted
+            if (downloader.IsEncrypted())
+            {
+                string errorMessage = $"{downloader.GetName()} is encrypted!";
+                System.Diagnostics.Debug.WriteLine(errorMessage);
+                var message = new MessageDialog(errorMessage);
+                message.ShowAsync();
+                return;
+            }
 
             // Create a new thread which will download the youtube video.
             _threads.Add(new Thread(() =>
             {
                 _semaphore.Wait();
-                
-                _fileLocation = downloader.Download(url.ToString());
+
+                _fileLocation = downloader.Download();
 
                 _semaphore.Release();
             }));
@@ -70,11 +83,11 @@ namespace SoundboardThreading
             // Update the ui to show audio controls
             if (_fileLocation != null)
             {
-                DownloadButton.Visibility = Visibility.Collapsed;
-                TextBox.Visibility = Visibility.Collapsed;
-                PlayButton.Visibility = Visibility.Visible;
-                TextBlock.Text = _fileLocation.Split(".")[0];
-                TextBlock.Visibility = Visibility.Visible;
+                _downloadButton.Visibility = Visibility.Collapsed;
+                _textBox.Visibility = Visibility.Collapsed;
+                _playButton.Visibility = Visibility.Visible;
+                _textBlock.Text = _fileLocation.Split(".")[0];
+                _textBlock.Visibility = Visibility.Visible;
             }
         }
 
@@ -83,10 +96,10 @@ namespace SoundboardThreading
          */
         private void Play_Button(object sender, RoutedEventArgs e)
         {
-            AudioManager.Play(_fileLocation);
+            _audioManager.Play(_fileLocation);
 
-            PlayButton.Visibility = Visibility.Collapsed;
-            StopButton.Visibility = Visibility.Visible;
+            _playButton.Visibility = Visibility.Collapsed;
+            _stopButton.Visibility = Visibility.Visible;
         }
 
         /*
@@ -94,10 +107,10 @@ namespace SoundboardThreading
          */
         private void Stop_Button(object sender, RoutedEventArgs e)
         {
-            AudioManager.Stop();
+            _audioManager.Stop();
 
-            PlayButton.Visibility = Visibility.Visible;
-            StopButton.Visibility = Visibility.Collapsed;
+            _playButton.Visibility = Visibility.Visible;
+            _stopButton.Visibility = Visibility.Collapsed;
         }
 
         //--------Generate UI--------\\
@@ -105,14 +118,14 @@ namespace SoundboardThreading
         private void CreateTextBox(TextBox textBox)
         {
             textBox.Name = "textBox" + _column + _row;
-            textBox.HorizontalAlignment = HorizontalAlignment.Center;
+            textBox.HorizontalAlignment = HorizontalAlignment.Stretch;
             textBox.VerticalAlignment = VerticalAlignment.Center;
-            textBox.Width = 350;
             textBox.PlaceholderText = "Paste Url here";
             textBox.Visibility = Visibility.Visible;
+            textBox.Margin = new Thickness(10,0,10,0);
             Grid.SetColumn(textBox, _column);
             Grid.SetRow(textBox, _row);
-            TextBox = textBox;
+            _textBox = textBox;
         }
 
         private void CreateTextBlock(TextBlock textBlock)
@@ -121,9 +134,10 @@ namespace SoundboardThreading
             textBlock.HorizontalAlignment = HorizontalAlignment.Center;
             textBlock.VerticalAlignment = VerticalAlignment.Center;
             textBlock.Visibility = Visibility.Collapsed;
+            textBlock.Margin = new Thickness(10, 0, 10, 0);
             Grid.SetColumn(textBlock, _column);
             Grid.SetRow(textBlock, _row);
-            TextBlock = textBlock;
+            _textBlock = textBlock;
         }
 
         private void CreatePlayButton(Button playButton)
@@ -133,10 +147,11 @@ namespace SoundboardThreading
             playButton.HorizontalAlignment = HorizontalAlignment.Center;
             playButton.VerticalAlignment = VerticalAlignment.Top;
             playButton.Visibility = Visibility.Collapsed;
+            playButton.Margin = new Thickness(0, 15, 0, 15);
             Grid.SetColumn(playButton, _column);
             Grid.SetRow(playButton, _row);
             playButton.Click += Play_Button;
-            PlayButton = playButton;
+            _playButton = playButton;
         }
         private void CreateStopButton(Button stopButton)
         {
@@ -145,10 +160,11 @@ namespace SoundboardThreading
             stopButton.HorizontalAlignment = HorizontalAlignment.Center;
             stopButton.VerticalAlignment = VerticalAlignment.Top;
             stopButton.Visibility = Visibility.Collapsed;
+            stopButton.Margin = new Thickness(0,15,0,15);
             Grid.SetColumn(stopButton, _column);
             Grid.SetRow(stopButton, _row);
             stopButton.Click += Stop_Button;
-            StopButton = stopButton;
+            _stopButton = stopButton;
         }
         private void CreateDownloadButton(Button downloadButton)
         {
@@ -157,10 +173,11 @@ namespace SoundboardThreading
             downloadButton.HorizontalAlignment = HorizontalAlignment.Center;
             downloadButton.VerticalAlignment = VerticalAlignment.Bottom;
             downloadButton.Visibility = Visibility.Visible;
+            downloadButton.Margin = new Thickness(0, 15, 0, 15);
             Grid.SetColumn(downloadButton, _column);
             Grid.SetRow(downloadButton, _row);
             downloadButton.Click += Download_Button;
-            DownloadButton = downloadButton;
+            _downloadButton = downloadButton;
         }
 
         

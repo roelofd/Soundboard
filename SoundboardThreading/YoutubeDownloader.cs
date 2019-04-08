@@ -12,41 +12,47 @@ namespace SoundboardThreading
     // Class that handles the downloading of youtube videos
     class YoutubeDownloader
     {
+        // The folder where the downloaded files are stored
+        private readonly StorageFolder _storageFolder;       
+        private readonly YouTubeVideo _video;
 
-        private StorageFolder _storageFolder;       // The folder where the downloaded files are stored
-        private YouTube _youTube;                   // Class used for getting videos
-
-        public YoutubeDownloader()
+        public YoutubeDownloader(string url)
         {
-            _storageFolder = ApplicationData.Current.LocalFolder;   // Set download folder
-            _youTube = YouTube.Default;                             // Set Youtube class
+            // Set download folder to LocalState folder
+            _storageFolder = ApplicationData.Current.LocalFolder;
+
+            var youTube = YouTube.Default;
+            _video = youTube.GetVideo(url);
         }
 
-
-
         /*
-         * Method called for downloading the actual video
-         *
-         * @param url The url of the youtube video.
+         * Write File
+         * @return the name of the mp3 file
          */
-        public string Download(string url)
+        public string Download()
         {
-            YouTubeVideo video = _youTube.GetVideo(url);    // Get video by URL
-
-            // Check if video is encrypted
-            if (video.IsEncrypted)
-            {
-                var message = new MessageDialog($"{video.FullName} is encrypted!");
-                message.ShowAsync();
-                return null;
-            }
-
-            WriteFileAsync(video);      
-            return video.FullName + ".mp3";     // Return the downloaded MP3
+            WriteFileAsync(_video);
+            return _video.FullName + ".mp3";
         }
 
         /*
-         * Method for writing the video 
+         * @return true if video is encrypted
+         */
+        public bool IsEncrypted()
+        {
+            return _video.IsEncrypted;
+        }
+
+        /*
+         * @return video name
+         */
+        public string GetName()
+        {
+            return _video.FullName;
+        }
+
+        /*
+         * Method for writing the video and audio files
          */
         private async void WriteFileAsync(YouTubeVideo video)
         {
@@ -55,11 +61,12 @@ namespace SoundboardThreading
             
             StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(mp4StorageFile.Name + ".mp3", CreationCollisionOption.ReplaceExisting);
             var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
-            await ToAudioAsync(mp4StorageFile, mp3StorageFile, profile);     // Convert the MP4 to MP3
+            await ToAudioAsync(mp4StorageFile, mp3StorageFile, profile);     
         }
 
         /*
          * Method for converting the MP4 to MP3
+         * Writes to the destination file
          */
         private async Task ToAudioAsync(StorageFile source, StorageFile destination, MediaEncodingProfile profile)
         {
@@ -77,7 +84,6 @@ namespace SoundboardThreading
             }
             else
             {
-                // If failed, print failure
                 switch (prepareOp.FailureReason)    
                 {
                     case TranscodeFailureReason.CodecNotFound:
