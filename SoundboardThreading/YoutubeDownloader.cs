@@ -5,6 +5,7 @@ using Windows.Storage;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using Windows.Foundation;
+using Windows.UI.Popups;
 
 namespace SoundboardThreading
 {
@@ -14,6 +15,7 @@ namespace SoundboardThreading
         // The folder where the downloaded files are stored
         private readonly StorageFolder _storageFolder;       
         private readonly YouTubeVideo _video;
+        private readonly bool _isValid;
 
         public YoutubeDownloader(string url)
         {
@@ -21,7 +23,15 @@ namespace SoundboardThreading
             _storageFolder = ApplicationData.Current.LocalFolder;
 
             var youTube = YouTube.Default;
-            _video = youTube.GetVideo(url);
+            try
+            {
+                _video = youTube.GetVideo(url);
+                _isValid = true;
+            }
+            catch (Exception e)
+            {
+                _isValid = false;
+            }
         }
 
         /*
@@ -40,6 +50,11 @@ namespace SoundboardThreading
         public bool IsEncrypted()
         {
             return _video.IsEncrypted;
+        }
+
+        public bool IsValid()
+        {
+            return _isValid;
         }
 
         /*

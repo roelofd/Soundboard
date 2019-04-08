@@ -9,11 +9,13 @@ namespace SoundboardThreading
 {
     class Tile
     {
-        private readonly List<Thread> _threads;
-        private readonly SemaphoreSlim _semaphore;
         private readonly AudioManager _audioManager;
         private readonly int _column;
         private readonly int _row;
+
+        // Semaphore
+        private readonly List<Thread> _threads;
+        private readonly SemaphoreSlim _semaphore;
 
         //The location where the .mp3 is stored.
         private string _fileLocation;
@@ -45,9 +47,6 @@ namespace SoundboardThreading
         /*
          * Button listener which will download a youtube video.
          */
-        /*
-         * Button listener which will download a youtube video.
-         */
         private void Download_Button(object sender, RoutedEventArgs e)
         {
             // Get url from text box before starting threads.
@@ -55,12 +54,18 @@ namespace SoundboardThreading
             //Create a downloader.
             var downloader = new YoutubeDownloader(url.ToString());
 
+            // Check if the give url is a valid url
+            if (!downloader.IsValid())
+            {
+                var message = new MessageDialog($"{url} is not a valid youtube url!");
+                message.ShowAsync();
+                return;
+            }
+
             // Check if video is encrypted
             if (downloader.IsEncrypted())
             {
-                string errorMessage = $"{downloader.GetName()} is encrypted!";
-                System.Diagnostics.Debug.WriteLine(errorMessage);
-                var message = new MessageDialog(errorMessage);
+                var message = new MessageDialog($"{downloader.GetName()} is encrypted!");
                 message.ShowAsync();
                 return;
             }

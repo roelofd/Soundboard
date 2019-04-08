@@ -9,11 +9,11 @@ namespace SoundboardThreading
     /// </summary>
     public sealed partial class MainPage
     {
-        private readonly List<Thread> _downloadThreads = new List<Thread>(); 
-        private readonly SemaphoreSlim _downloadSlim = new SemaphoreSlim(4);
-
         public MainPage()
         {
+            List<Thread> downloadThreads = new List<Thread>();
+            SemaphoreSlim downloadSlim = new SemaphoreSlim(4);
+
             InitializeComponent();
 
             //This for loop creates all the tiles.
@@ -38,7 +38,7 @@ namespace SoundboardThreading
                     Square.Children.Add(downloadButton);
                     
                     //Creates the Tile and adds the UI elements to it.
-                    new Tile(textBox, textBlock, playButton, stopButton, downloadButton, column, row, _downloadThreads, _downloadSlim);
+                    new Tile(textBox, textBlock, playButton, stopButton, downloadButton, column, row, downloadThreads, downloadSlim);
                 }
             }
         }
