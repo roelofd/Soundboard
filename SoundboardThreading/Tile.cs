@@ -10,18 +10,21 @@ namespace SoundboardThreading
     {
         private List<Thread> _threads;
         private SemaphoreSlim _semaphore;
+
+        //The location where the .mp3 is stored.
         private string _fileLocation;
+
         private int _column;
         private int _row;
 
 
-        public TextBox TextBox { get; set; }
-        public TextBlock TextBlock { get; set; }
-        public Button PlayButton { get; set; }
-        public Button StopButton { get; set; }
-        public Button DownloadButton { get; set; }
-        public ProgressBar ProgressBar { get; set; }
-        AudioManager audioManager;
+        private TextBox TextBox;
+        private TextBlock TextBlock;
+        private Button PlayButton;
+        private Button StopButton;
+        private Button DownloadButton;
+
+        private AudioManager AudioManager;
 
         public Tile(TextBox textBox, TextBlock textBlock, Button playButton, Button stopButton, Button downloadButton, int column, int row, List<Thread> threads, SemaphoreSlim semaphore)
         {
@@ -36,7 +39,7 @@ namespace SoundboardThreading
             CreateDownloadButton(downloadButton);
             CreateStopButton(stopButton);
 
-            audioManager = new AudioManager();
+            AudioManager = new AudioManager();
         }
         
         /*
@@ -53,10 +56,8 @@ namespace SoundboardThreading
             _threads.Add(new Thread(() =>
             {
                 _semaphore.Wait();
-
-                #region
+                
                 _fileLocation = downloader.Download(url.ToString());
-                #endregion
 
                 _semaphore.Release();
             }));
@@ -82,7 +83,7 @@ namespace SoundboardThreading
          */
         private void Play_Button(object sender, RoutedEventArgs e)
         {
-            audioManager.Play(_fileLocation);
+            AudioManager.Play(_fileLocation);
 
             PlayButton.Visibility = Visibility.Collapsed;
             StopButton.Visibility = Visibility.Visible;
@@ -93,7 +94,7 @@ namespace SoundboardThreading
          */
         private void Stop_Button(object sender, RoutedEventArgs e)
         {
-            audioManager.Stop();
+            AudioManager.Stop();
 
             PlayButton.Visibility = Visibility.Visible;
             StopButton.Visibility = Visibility.Collapsed;
