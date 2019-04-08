@@ -113,8 +113,7 @@ namespace SoundboardThreading
             _stopButton.Visibility = Visibility.Collapsed;
         }
 
-        //--------Generate UI--------\\
-
+        #region Generate UI
         private void CreateTextBox(TextBox textBox)
         {
             textBox.Name = "textBox" + _column + _row;
@@ -179,7 +178,6 @@ namespace SoundboardThreading
             downloadButton.Click += Download_Button;
             _downloadButton = downloadButton;
         }
-
-        
+        #endregion
     }
 }

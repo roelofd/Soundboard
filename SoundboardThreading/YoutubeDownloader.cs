@@ -5,7 +5,6 @@ using Windows.Storage;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using Windows.Foundation;
-using Windows.UI.Popups;
 
 namespace SoundboardThreading
 {
