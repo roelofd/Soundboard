@@ -3,20 +3,20 @@ using Windows.UI.Xaml.Controls;
 
 namespace SoundboardThreading.State
 {
-    class EditState : State
+    class EditState : IState
     {
-        public State ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, MainPage mainPage)
+        public IState ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, MainPage mainPage)
         {
             Debug.WriteLine("Time to Edit!");
             var sound = (Sound) e.ClickedItem;
 
-            var splitView = mainPage.setEditPaneContent(sound.Title);
+            var splitView = mainPage.SetEditPaneContent(sound.Title);
             splitView.IsPaneOpen = true;
 
             return new EditState();
         }
 
-        public StateType getState()
+        public StateType GetState()
         {
             return StateType.Editing;
         }

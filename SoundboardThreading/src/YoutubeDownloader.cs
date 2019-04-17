@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using VideoLibrary;
 using Windows.Storage;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using Windows.Foundation;
-using Windows.UI.Popups;
 
 namespace SoundboardThreading
 {
@@ -15,27 +13,11 @@ namespace SoundboardThreading
     {
         // The folder where the downloaded files are stored
         private readonly StorageFolder _storageFolder;
-        private readonly bool _isValid;
 
         private readonly YouTube _youTube = YouTube.Default;
 
         private YouTubeVideo _video;
-        private string mp3FileName;
-
-        public YoutubeDownloader(string url)
-        {
-            // Set download folder to LocalState folder
-            _storageFolder = ApplicationData.Current.LocalFolder;
-            try
-            {
-                _video = _youTube.GetVideo(url);
-                _isValid = true;
-            }
-            catch (Exception e)
-            {
-                _isValid = false;
-            }
-        }
+        private string _mp3FileName;
 
         public YoutubeDownloader()
         {
@@ -47,44 +29,18 @@ namespace SoundboardThreading
          * Write File
          * @return the name of the mp3 file
          */
-        public string Download()
-        {
-            WriteFileAsync(_video);
-            return _video.FullName + ".mp3";
-        }
         public Sound Download(string url)
         {
             _video = _youTube.GetVideo(url);
 
             WriteFileAsync(_video);
 
-            mp3FileName = _video.FullName.Substring(0, _video.FullName.Length - 14);
-            var sound = new Sound(mp3FileName, mp3FileName + ".mp3");
+            _mp3FileName = _video.FullName.Substring(0, _video.FullName.Length - 14);
+            var sound = new Sound(_mp3FileName, _mp3FileName + ".mp3");
 
             sound.VideoName = _video.FullName;
 
             return sound;
-        }
-
-        /*
-         * @return true if video is encrypted
-         */
-        public bool IsEncrypted()
-        {
-            return _video.IsEncrypted;
-        }
-
-        public bool IsValid()
-        {
-            return _isValid;
-        }
-
-        /*
-         * @return video name
-         */
-        public string GetName()
-        {
-            return _video.FullName;
         }
 
         /*
@@ -95,8 +51,8 @@ namespace SoundboardThreading
             StorageFile mp4StorageFile = await _storageFolder.CreateFileAsync(video.FullName, CreationCollisionOption.ReplaceExisting); // Store the video as a MP4
             await FileIO.WriteBytesAsync(mp4StorageFile, video.GetBytes());
 
-            mp3FileName = mp4StorageFile.Name.Substring(0, mp4StorageFile.Name.Length - 14);
-            StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(mp3FileName + ".mp3", CreationCollisionOption.ReplaceExisting);
+            _mp3FileName = mp4StorageFile.Name.Substring(0, mp4StorageFile.Name.Length - 14);
+            StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(_mp3FileName + ".mp3", CreationCollisionOption.ReplaceExisting);
             var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
             await ToAudioAsync(mp4StorageFile, mp3StorageFile, profile);
         }

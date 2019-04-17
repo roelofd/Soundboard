@@ -128,7 +128,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\OLDTile.cs" />
     <Compile Include="src\State\EditState.cs" />
     <Compile Include="src\State\PauseState.cs" />
     <Compile Include="src\State\PlayState.cs" />

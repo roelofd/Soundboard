@@ -12,9 +12,9 @@
             <Border Height="150" Width="150" BorderBrush="{x:Null}"  Background="{x:Bind Color}">
                 <StackPanel HorizontalAlignment="Center" Padding="0,50,0,0">
                     <Viewbox Height="35" Width="35" Stretch="Uniform">
-                        <SymbolIcon Symbol="Play" />
+                        <SymbolIcon Symbol="Play" Foreground="{x:Bind ForeGround}"/>
                     </Viewbox>
-                    <TextBlock Text="{x:Bind Title}" HorizontalAlignment="Center" TextWrapping="Wrap" MaxHeight="56"/>
+                    <TextBlock Text="{x:Bind Title}" Foreground="{x:Bind ForeGround}"  HorizontalAlignment="Center" TextWrapping="Wrap" MaxHeight="56"/>
                 </StackPanel>
             </Border>
         </DataTemplate>
@@ -22,7 +22,6 @@
             <Setter Property="Margin" Value="10,10,10,10" />
         </Style>
     </Page.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -34,16 +33,16 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Column="0">
-                <AppBarButton x:Name="AddButton" Icon="Add" Label="Add" Click="AddButton_OnClick"/>
+                <AppBarButton Icon="Add" Label="Add" Click="AddButton_OnClick"/>
                 <AppBarSeparator VerticalAlignment="Center" />
-                <AppBarToggleButton x:Name="EditButton" Icon="Edit" Label="Edit" Click="EditButton_OnClick"/>
+                <AppBarToggleButton Icon="Edit" Label="Edit" Click="EditButton_OnClick"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="1">
                 <TextBlock Text="State" x:Name="StateBox" VerticalAlignment="Center"/>
                 <AppBarSeparator VerticalAlignment="Center" />
-                <AppBarButton x:Name="PlayButton" Icon="Play" Label="Play" Click="PlayButton_Click" />
-                <AppBarButton x:Name="PauseButton" Icon="Pause" Label="Pause" Click="PauseButton_Click" />
-                <AppBarButton x:Name="StopButton" Icon="Stop" Label="Stop" Click="StopButton_Click" />
+                <AppBarButton Icon="Play" Label="Play" Click="PlayButton_Click" />
+                <AppBarButton Icon="Pause" Label="Pause" Click="PauseButton_Click" />
+                <AppBarButton Icon="Stop" Label="Stop" Click="StopButton_Click" />
             </StackPanel>
         </Grid>
         <SplitView x:Name="SplitView" OpenPaneLength="850" DisplayMode="Overlay" PanePlacement="Right" Grid.Row="1"
@@ -58,11 +57,11 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Sound settings" x:Name="PaneHeader" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="Sound settings" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
                     <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Left" Margin="60,10,0,0">
                         <TextBlock Text="Name:" />
                         <TextBox x:Name="EditTitleBox" Width="450" />
-                        <SplitButton x:Name="ColorButton" Margin="0,20,0,0">
+                        <SplitButton Margin="0,20,0,0">
                             <Border x:Name="SelectedColorBorder" Width="20" Height="20" Background="Gray" />
                             <SplitButton.Flyout>
                                 <Flyout x:Name="ColorFlyout">
@@ -85,7 +84,7 @@
                                 </Flyout>
                             </SplitButton.Flyout>
                         </SplitButton>
-                        <Button x:Name="EditSaveButton" Content="Save" Margin="0,15,0,0" Click="EditSaveButton_Click"></Button>
+                        <Button Content="Save" Margin="0,15,0,0" Click="EditSaveButton_Click"></Button>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="14,24,0,24" >
                         <SymbolIcon Symbol="Setting" />
@@ -93,9 +92,12 @@
                     </StackPanel>
                 </Grid>
             </SplitView.Pane>
-            <Grid x:Name="Content">
-                <GridView x:Name="SoundView" 
-                          ItemsSource="{x:Bind _sounds}"
+            <Grid>
+                <MediaElement x:Name="MediaElement" 
+                              MediaEnded="StopButton_Click"/>
+
+                <GridView
+                    ItemsSource="{x:Bind _sounds}"
                           IsItemClickEnabled="True"
                           ItemClick="ListViewBase_OnItemClick"
                           ItemTemplate="{StaticResource SoundDataTemplate}" />

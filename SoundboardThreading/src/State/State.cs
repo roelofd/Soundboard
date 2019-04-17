@@ -9,9 +9,9 @@ namespace SoundboardThreading.State
         Paused,
         Editing
     }
-    interface State
+    interface IState
     {
-        State ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, MainPage mainPage);
-        StateType getState();
+        IState ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, MainPage mainPage);
+        StateType GetState();
     }
 }

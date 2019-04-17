@@ -3,9 +3,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace SoundboardThreading.State
 {
-    class PauseState : State
+    class PauseState : IState
     {
-        public State ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, MainPage mainPage)
+        public IState ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, MainPage mainPage)
         {
             var sound = (Sound) e.ClickedItem;
 
@@ -23,7 +23,7 @@ namespace SoundboardThreading.State
             return new PlayState();
         }
 
-        public StateType getState()
+        public StateType GetState()
         {
             return StateType.Paused;
         }
