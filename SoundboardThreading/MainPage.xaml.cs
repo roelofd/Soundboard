@@ -1,6 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using Windows.Storage;
+using Windows.Storage.Search;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using SoundboardThreading.State;
 
 namespace SoundboardThreading
 {
@@ -9,37 +15,98 @@ namespace SoundboardThreading
     /// </summary>
     public sealed partial class MainPage
     {
+        private readonly ObservableCollection<Sound> _sounds;
+        private readonly AudioManager _audioManager;
+        private readonly YoutubeDownloader _youtubeDownloader;
+        private State.State _state;
+        private State.State _prevState;
+
         public MainPage()
         {
-            List<Thread> downloadThreads = new List<Thread>();
-            SemaphoreSlim downloadSlim = new SemaphoreSlim(4);
-
             InitializeComponent();
 
-            //This for loop creates all the tiles.
-            for (int column = 0; column < 4; column++)
+            _state = new StopState();
+            _prevState = new StopState();
+            _audioManager = new AudioManager();
+            _sounds = new ObservableCollection<Sound>();
+            _youtubeDownloader = new YoutubeDownloader();
+
+            LoadSounds();
+        }
+
+        private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            _state = _state.ListViewBase_OnItemClick(sender, e, SplitView, _audioManager);
+            StateBox.Text = _state.getState().ToString();
+        }
+
+        private void EditButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_state.GetType() != typeof(EditState))
             {
-                for(int row = 0; row < 4; row++)
-                {
-                    //Adds the UI elements to the grid.
-                    TextBox textBox = new TextBox();
-                    Square.Children.Add(textBox);
+                _prevState = _state;
+                _state = new EditState();
+                StateBox.Text = _state.getState().ToString();
+                return;
+            }
 
-                    TextBlock textBlock = new TextBlock();
-                    Square.Children.Add(textBlock);
-                    
-                    Button playButton = new Button();
-                    Square.Children.Add(playButton);
+            _state = _prevState;
 
-                    Button stopButton = new Button();
-                    Square.Children.Add(stopButton);
+            StateBox.Text = _state.getState().ToString();
+        }
 
-                    Button downloadButton = new Button();                    
-                    Square.Children.Add(downloadButton);
-                    
-                    //Creates the Tile and adds the UI elements to it.
-                    new Tile(textBox, textBlock, playButton, stopButton, downloadButton, column, row, downloadThreads, downloadSlim);
-                }
+        private async void AddButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var addDialog = new AddDialog(_youtubeDownloader);
+            await addDialog.ShowAsync();
+
+            if (addDialog.Result == DownloadResult.Ok)
+            {
+                Debug.WriteLine("download success!");
+                _sounds.Add(addDialog.Sound);
+            }
+        }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_state.GetType() == typeof(PauseState))
+            {
+                _audioManager.Play();
+                _state = new PlayState();
+                StateBox.Text = _state.getState().ToString();
+            }
+        }
+
+        private void PauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_state.GetType() == typeof(PlayState))
+            {
+                _audioManager.Pause();
+                _state = new PauseState();
+                StateBox.Text = _state.getState().ToString();
+            }
+        }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            _audioManager.Stop();
+            _state = new StopState();
+            StateBox.Text = _state.getState().ToString();
+        }
+
+        private async void LoadSounds()
+        {
+            var fileTypeFilter = new List<string>();
+            fileTypeFilter.Add(".mp3");
+
+            var queryOptions = new QueryOptions(CommonFileQuery.OrderByName, fileTypeFilter);
+            var query = ApplicationData.Current.LocalFolder.CreateFileQueryWithOptions(queryOptions);
+
+            IReadOnlyList<StorageFile> fileList = await query.GetFilesAsync();
+
+            foreach (StorageFile file in fileList)
+            {
+                _sounds.Add(new Sound(file.DisplayName, file.Name));
             }
         }
     }

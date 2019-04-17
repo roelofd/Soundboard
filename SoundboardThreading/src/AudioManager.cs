@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -10,6 +11,8 @@ namespace SoundboardThreading
      */
     class AudioManager
     {
+        public string CurrentlyPlaying { get; private set; }
+
         private readonly StorageFolder _storageFolder;
         private readonly MediaElement _playMusic;
 
@@ -17,6 +20,7 @@ namespace SoundboardThreading
         {
             _storageFolder = ApplicationData.Current.LocalFolder;
             _playMusic = new MediaElement {AudioCategory = AudioCategory.Media};
+            CurrentlyPlaying = "";
         }
 
         /*
@@ -27,15 +31,25 @@ namespace SoundboardThreading
         {
             var sound = await _storageFolder.GetFileAsync(fileName);
             _playMusic.SetSource(await sound.OpenAsync(FileAccessMode.Read), sound.ContentType);
+            CurrentlyPlaying = fileName;
             _playMusic.Play();
         }
 
         /*
          * Stops the audio
          */
+        public void Play()
+        {
+            _playMusic.Play();
+        }
         public void Stop()
         {
             _playMusic.Stop();
+        }
+
+        public void Pause()
+        {
+            _playMusic.Pause();
         }
     }
 }

@@ -116,15 +116,24 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AddDialog.xaml.cs">
+      <DependentUpon>AddDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\Sound.cs" />
     <Compile Include="src\AudioManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Tile.cs" />
+    <Compile Include="src\OLDTile.cs" />
+    <Compile Include="src\State\EditState.cs" />
+    <Compile Include="src\State\PauseState.cs" />
+    <Compile Include="src\State\PlayState.cs" />
+    <Compile Include="src\State\State.cs" />
+    <Compile Include="src\State\StopState.cs" />
     <Compile Include="src\YoutubeDownloader.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +201,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="AddDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

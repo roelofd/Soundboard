@@ -7,36 +7,67 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <DataTemplate x:DataType="local:Sound" x:Key="SoundDataTemplate">
+            <Border Height="150" Width="150" BorderBrush="{x:Null}" Padding="15,15,15,15">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <SymbolIcon Symbol="Play" />
+                    <TextBlock Text="{x:Bind Title}" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <Grid x:Name="Square">
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
+        <Grid Background="#FFDFDFDF">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Grid.Resources>
-                <Style TargetType="GridViewItem">
-                    <Setter Property="BorderBrush" Value="Black" />
-                    <Setter Property="BorderThickness" Value="5" />
-                </Style>
-            </Grid.Resources>
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <AppBarButton x:Name="AddButton" Icon="Add" Label="Add" Click="AddButton_OnClick"/>
+                <AppBarSeparator VerticalAlignment="Center" />
+                <AppBarToggleButton x:Name="EditButton" Icon="Edit" Label="Edit" Click="EditButton_OnClick"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1">
+                <TextBlock Text="State" x:Name="StateBox" VerticalAlignment="Center"/>
+                <AppBarSeparator VerticalAlignment="Center" />
+                <AppBarButton x:Name="PlayButton" Icon="Play" Label="Play" Click="PlayButton_Click" />
+                <AppBarButton x:Name="PauseButton" Icon="Pause" Label="Pause" Click="PauseButton_Click" />
+                <AppBarButton x:Name="StopButton" Icon="Stop" Label="Stop" Click="StopButton_Click" />
+            </StackPanel>
         </Grid>
+        <SplitView x:Name="SplitView" OpenPaneLength="850" DisplayMode="Overlay" PanePlacement="Right" Grid.Row="1">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid.Background>
+                        <AcrylicBrush TintColor="#FFF1F1F1"/>
+                    </Grid.Background>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="PANE CONTENT" x:Name="PaneHeader" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="14,24,0,24" >
+                        <SymbolIcon Symbol="Setting" />
+                        <TextBlock Text="Settings" Margin="24,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </SplitView.Pane>
+            <Grid x:Name="Content">
+
+                <GridView x:Name="GridView" 
+                          ItemsSource="{x:Bind _sounds}"
+                          IsItemClickEnabled="True"
+                          ItemClick="ListViewBase_OnItemClick"
+                          ItemTemplate="{StaticResource SoundDataTemplate}"/>
+
+            </Grid>
+        </SplitView>
     </Grid>
 </Page>
