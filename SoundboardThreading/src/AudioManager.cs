@@ -1,22 +1,24 @@
 ﻿using System;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace SoundboardThreading
 {
     /*
      * Plays and stops the audio.
      */
-    class AudioManager
+    public class AudioManager
     {
-        private readonly StorageFolder _storageFolder;
-        private readonly MediaElement _playMusic;
+        public string CurrentlyPlaying { get; private set; }
+        public MediaElement PlayMusic { get; }
 
-        public AudioManager()
+        private readonly StorageFolder _storageFolder;
+
+        public AudioManager(MediaElement mediaElement)
         {
             _storageFolder = ApplicationData.Current.LocalFolder;
-            _playMusic = new MediaElement {AudioCategory = AudioCategory.Media};
+            PlayMusic = mediaElement;
+            CurrentlyPlaying = "";
         }
 
         /*
@@ -26,16 +28,26 @@ namespace SoundboardThreading
         public async void Play(string fileName)
         {
             var sound = await _storageFolder.GetFileAsync(fileName);
-            _playMusic.SetSource(await sound.OpenAsync(FileAccessMode.Read), sound.ContentType);
-            _playMusic.Play();
+            PlayMusic.SetSource(await sound.OpenAsync(FileAccessMode.Read), sound.ContentType);
+            CurrentlyPlaying = fileName;
+            PlayMusic.Play();
         }
 
         /*
          * Stops the audio
          */
+        public void Play()
+        {
+            PlayMusic.Play();
+        }
         public void Stop()
         {
-            _playMusic.Stop();
+            PlayMusic.Stop();
+        }
+
+        public void Pause()
+        {
+            PlayMusic.Pause();
         }
     }
 }
