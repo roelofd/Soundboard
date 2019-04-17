@@ -5,11 +5,11 @@ namespace SoundboardThreading.State
 {
     class StopState : State
     {
-        public State ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, SplitView splitView, AudioManager audioManager)
+        public State ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, MainPage mainPage)
         {
             Debug.WriteLine("Start Sound!");
             Sound sound = (Sound)e.ClickedItem;
-            audioManager.Play(sound.FileName);
+            mainPage.AudioManager.Play(sound.FileName);
             return new PlayState();
         }
 

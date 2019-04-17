@@ -11,7 +11,7 @@ namespace SoundboardThreading.State
     }
     interface State
     {
-        State ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, SplitView splitView, AudioManager audioManager);
+        State ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, MainPage mainPage);
         StateType getState();
     }
 }

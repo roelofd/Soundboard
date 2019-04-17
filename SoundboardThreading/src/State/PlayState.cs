@@ -5,18 +5,18 @@ namespace SoundboardThreading.State
 {
     class PlayState : State
     {
-        public State ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, SplitView splitView, AudioManager audioManager)
+        public State ListViewBase_OnItemClick(object sender, ItemClickEventArgs e, MainPage mainPage)
         {
             var sound = (Sound) e.ClickedItem;
-            if (sound.FileName.Equals(audioManager.CurrentlyPlaying))
+            if (sound.FileName.Equals(mainPage.AudioManager.CurrentlyPlaying))
             {
                 Debug.WriteLine("Pause Sound!");
-                audioManager.Pause();
+                mainPage.AudioManager.Pause();
                 return new PauseState();
             }
 
             Debug.WriteLine("Play new one!");
-            audioManager.Play(sound.FileName);
+            mainPage.AudioManager.Play(sound.FileName);
             return new PlayState();
         }
 

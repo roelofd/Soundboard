@@ -9,7 +9,7 @@ namespace SoundboardThreading
     /*
      * Plays and stops the audio.
      */
-    class AudioManager
+    public class AudioManager
     {
         public string CurrentlyPlaying { get; private set; }
 

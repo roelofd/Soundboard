@@ -9,13 +9,18 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <DataTemplate x:DataType="local:Sound" x:Key="SoundDataTemplate">
-            <Border Height="150" Width="150" BorderBrush="{x:Null}" Padding="15,15,15,15">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <SymbolIcon Symbol="Play" />
-                    <TextBlock Text="{x:Bind Title}" HorizontalAlignment="Center"/>
+            <Border Height="150" Width="150" BorderBrush="{x:Null}"  Background="{x:Bind Color}">
+                <StackPanel HorizontalAlignment="Center" Padding="0,50,0,0">
+                    <Viewbox Height="35" Width="35" Stretch="Uniform">
+                        <SymbolIcon Symbol="Play" />
+                    </Viewbox>
+                    <TextBlock Text="{x:Bind Title}" HorizontalAlignment="Center" TextWrapping="Wrap" MaxHeight="56"/>
                 </StackPanel>
             </Border>
         </DataTemplate>
+        <Style TargetType="GridViewItem">
+            <Setter Property="Margin" Value="10,10,10,10" />
+        </Style>
     </Page.Resources>
 
     <Grid>
@@ -23,7 +28,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Background="#FFDFDFDF">
+        <Grid Background="#FFDFDFDF" BorderBrush="Black" BorderThickness="0,0,0,1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -41,7 +46,8 @@
                 <AppBarButton x:Name="StopButton" Icon="Stop" Label="Stop" Click="StopButton_Click" />
             </StackPanel>
         </Grid>
-        <SplitView x:Name="SplitView" OpenPaneLength="850" DisplayMode="Overlay" PanePlacement="Right" Grid.Row="1">
+        <SplitView x:Name="SplitView" OpenPaneLength="850" DisplayMode="Overlay" PanePlacement="Right" Grid.Row="1"
+                   x:FieldModifier="public">
             <SplitView.Pane>
                 <Grid>
                     <Grid.Background>
@@ -52,7 +58,35 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="PANE CONTENT" x:Name="PaneHeader" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="Sound settings" x:Name="PaneHeader" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Left" Margin="60,10,0,0">
+                        <TextBlock Text="Name:" />
+                        <TextBox x:Name="EditTitleBox" Width="450" />
+                        <SplitButton x:Name="ColorButton" Margin="0,20,0,0">
+                            <Border x:Name="SelectedColorBorder" Width="20" Height="20" Background="Gray" />
+                            <SplitButton.Flyout>
+                                <Flyout x:Name="ColorFlyout">
+                                    <GridView ItemsSource="{x:Bind _colorOptions}"
+                                              SelectionChanged="ColorSelector_OnSelectionChanged"
+                                              SingleSelectionFollowsFocus="False"
+                                              SelectedIndex="0" Padding="0">
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Rectangle Fill="{Binding}" Width="20" Height="20" Margin="0"/>
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                        <GridView.Style>
+                                            <Style TargetType="GridView">
+                                                <Setter Property="Padding" Value="0" />
+                                                <Setter Property="Margin" Value="0" />
+                                            </Style>
+                                        </GridView.Style>
+                                    </GridView>
+                                </Flyout>
+                            </SplitButton.Flyout>
+                        </SplitButton>
+                        <Button x:Name="EditSaveButton" Content="Save" Margin="0,15,0,0" Click="EditSaveButton_Click"></Button>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="14,24,0,24" >
                         <SymbolIcon Symbol="Setting" />
                         <TextBlock Text="Settings" Margin="24,0,0,0" VerticalAlignment="Center"/>
@@ -60,12 +94,11 @@
                 </Grid>
             </SplitView.Pane>
             <Grid x:Name="Content">
-
-                <GridView x:Name="GridView" 
+                <GridView x:Name="SoundView" 
                           ItemsSource="{x:Bind _sounds}"
                           IsItemClickEnabled="True"
                           ItemClick="ListViewBase_OnItemClick"
-                          ItemTemplate="{StaticResource SoundDataTemplate}"/>
+                          ItemTemplate="{StaticResource SoundDataTemplate}" />
 
             </Grid>
         </SplitView>
