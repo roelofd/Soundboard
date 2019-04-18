@@ -29,9 +29,17 @@ namespace SoundboardThreading
             try
             {
                 Sound = _youtubeDownloader.Download(new Uri(AddTextBox.Text).ToString());
-                //DeleteFile();
-                Message = "Download successful!";
-                Result = DownloadResult.Ok;
+
+                if (Sound == null)
+                {
+                    Message = _youtubeDownloader.Message;
+                    Result = DownloadResult.Fail;
+                }
+                else
+                {
+                    Message = "Download successful!";
+                    Result = DownloadResult.Ok;
+                }
             }
             catch
             {

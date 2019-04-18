@@ -76,7 +76,7 @@ namespace SoundboardThreading
 
             if (addDialog.Result != DownloadResult.Ok) return;
 
-            Debug.WriteLine("download success!");
+            Debug.WriteLine("Download success!");
             _sounds.Add(addDialog.Sound);
         }
 
