@@ -11,9 +11,9 @@ namespace SoundboardThreading
     // Class that handles the downloading of youtube videos
     public class YoutubeDownloader
     {
-        public string Message { get; private set; }
         // The folder where the downloaded files are stored
         private readonly StorageFolder _storageFolder;
+
         private readonly YouTube _youTube = YouTube.Default;
 
         private YouTubeVideo _video;
@@ -33,7 +33,10 @@ namespace SoundboardThreading
         {
             _video = _youTube.GetVideo(url);
 
-            var sound = WriteFileAsync(_video).Result;
+            WriteFileAsync(_video);
+
+            _mp3FileName = _video.FullName.Substring(0, _video.FullName.Length - 14);
+            var sound = new Sound(_mp3FileName, _mp3FileName + ".mp3");
 
             sound.VideoName = _video.FullName;
 
@@ -43,32 +46,15 @@ namespace SoundboardThreading
         /*
          * Method for writing the video and audio files
          */
-        private async Task<Sound> WriteFileAsync(YouTubeVideo video)
+        private async void WriteFileAsync(YouTubeVideo video)
         {
-            Sound sound = null;
-            try
-            {
+            StorageFile mp4StorageFile = await _storageFolder.CreateFileAsync(video.FullName, CreationCollisionOption.ReplaceExisting); // Store the video as a MP4
+            await FileIO.WriteBytesAsync(mp4StorageFile, video.GetBytes());
 
-                StorageFile mp4StorageFile =
-                    await _storageFolder.CreateFileAsync(video.FullName,
-                        CreationCollisionOption.ReplaceExisting); // Store the video as a MP4
-                await FileIO.WriteBytesAsync(mp4StorageFile, video.GetBytes());
-
-                _mp3FileName = mp4StorageFile.Name.Substring(0, mp4StorageFile.Name.Length - 14);
-
-                StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(_mp3FileName + ".mp3",
-                    CreationCollisionOption.ReplaceExisting);
-                var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
-                await ToAudioAsync(mp4StorageFile, mp3StorageFile, profile);
-
-                sound = new Sound(_mp3FileName, _mp3FileName + ".mp3");
-            }
-            catch (Exception e)
-            {
-                Message = $"Error: {e.Message}";
-            }
-
-            return sound;
+            _mp3FileName = mp4StorageFile.Name.Substring(0, mp4StorageFile.Name.Length - 14);
+            StorageFile mp3StorageFile = await _storageFolder.CreateFileAsync(_mp3FileName + ".mp3", CreationCollisionOption.ReplaceExisting);
+            var profile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
+            await ToAudioAsync(mp4StorageFile, mp3StorageFile, profile);
         }
 
         /*
